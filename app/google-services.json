@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "790443362434",
+    "firebase_url": "https://cyber2021finalprojectbeta-default-rtdb.firebaseio.com",
+    "project_id": "cyber2021finalprojectbeta",
+    "storage_bucket": "cyber2021finalprojectbeta.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:790443362434:android:e0cbd51ebddb5a01fe8c9b",
+        "android_client_info": {
+          "package_name": "edu.kfirawad.cyber2021finalprojectbeta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "790443362434-s7ve5nb6b0v7gdcriloiol9lk83hkfro.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrsx7kknx92iMTmjJnUD_FlH5pxm4u1hY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "790443362434-s7ve5nb6b0v7gdcriloiol9lk83hkfro.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

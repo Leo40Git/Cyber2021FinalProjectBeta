@@ -8,87 +8,84 @@
         android:orientation="vertical"
         android:layout_margin="8sp">
 
-    <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="100" />
-
     <LinearLayout
-            android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="100">
-
-        <TextView
-                android:text="Log In"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvTitle"
-                android:textStyle="bold"
-                android:textAlignment="center"
-                android:textSize="24sp" />
+            android:text="Log In"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <Space
-                android:layout_width="match_parent"
-                android:layout_height="12sp" />
+            android:layout_width="match_parent"
+            android:layout_height="12sp" />
 
         <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="E-mail" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="E-mail" />
 
         <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:ems="10"
-                android:id="@+id/etEmail" />
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textEmailAddress" />
 
         <TextView
-                android:text="Password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Password" />
 
         <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:ems="10"
-                android:id="@+id/etPassword" />
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword" />
 
         <Space
-                android:layout_width="match_parent"
-                android:layout_height="12sp" />
+            android:layout_width="match_parent"
+            android:layout_height="12sp" />
 
         <Button
-                android:text="Log In"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/btnAction"
-                android:layout_gravity="center_horizontal"
-                android:onClick="onClick_btnAction" />
-    </LinearLayout>
-
-    <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/btnAction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="1">
+            android:onClick="onClick_btnAction"
+            android:text="Log In" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="24sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
 
         <TextView
-                android:text="Don't have an account?"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/tvSwitchBtnDesc"
-                android:textAlignment="center" />
+            android:id="@+id/tvSwitchBtnDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Don't have an account?"
+            android:textAlignment="center" />
 
         <Button
-                android:text="Register"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/btnSwitch"
-                android:onClick="onClick_btnSwitch" />
+            android:id="@+id/btnSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClick_btnSwitch"
+            android:text="Register" />
     </LinearLayout>
 
 </LinearLayout>
