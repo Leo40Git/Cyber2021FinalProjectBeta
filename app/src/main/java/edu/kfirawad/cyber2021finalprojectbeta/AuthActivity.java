@@ -13,12 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import edu.kfirawad.cyber2021finalprojectbeta.db.UserPermissions;
 
-public class MainActivity extends AppCompatActivity {
+public class AuthActivity extends AppCompatActivity {
     private static final String TAG = "C2021FPB:Main";
 
     private boolean isRegistering;
@@ -34,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_auth);
 
         fbAuth = FirebaseAuth.getInstance();
         fbDb = FirebaseDatabase.getInstance();
