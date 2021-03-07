@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +34,7 @@ public abstract class BaseDashboardActivity extends AppCompatActivity {
     protected FirebaseAuth fbAuth;
     protected FirebaseDatabase fbDb;
 
+    protected FirebaseUser fbUser;
     protected UserPermissions userPerms;
     protected DatabaseReference userPermsRef;
     private ValueEventListener userPermsRefListener;
@@ -48,8 +50,8 @@ public abstract class BaseDashboardActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser user = fbAuth.getCurrentUser();
-        if (user == null) {
+        fbUser = fbAuth.getCurrentUser();
+        if (fbUser == null) {
             toLogin();
             return;
         }
@@ -77,7 +79,7 @@ public abstract class BaseDashboardActivity extends AppCompatActivity {
                 Log.w(logTag, "userPerms:onCancelled", databaseError.toException());
             }
         };
-        userPermsRef = UserPermissions.getReference(fbDb, user);
+        userPermsRef = UserPermissions.getReference(fbDb, fbUser);
         userPermsRef.addValueEventListener(userPermsRefListener);
     }
 
@@ -109,6 +111,22 @@ public abstract class BaseDashboardActivity extends AppCompatActivity {
             setMenuItemEnabled(menu, R.id.menuParent, userPerms.parent);
         }
         return menu.hasVisibleItems();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent intent;
+        final int id = item.getItemId();
+        if (id == R.id.menuDashboard)
+            intent = new Intent(this, DashboardActivity.class);
+        else if (id == R.id.menuManager)
+            intent = new Intent(this, ManagerActivity.class);
+        else {
+            Toast.makeText(this, "Unknown item \"" + item.getTitle() + "\" (" + id + ")", Toast.LENGTH_LONG).show();
+            return true;
+        }
+        startActivity(intent);
+        return true;
     }
 
     private void setMenuItemEnabled(Menu menu, int menuItemId, boolean enabled) {

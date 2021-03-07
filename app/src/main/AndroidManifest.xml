@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Cyber2021FinalProjectBeta">
+        <activity android:name=".ManagerActivity"></activity>
         <activity android:name=".DashboardActivity" />
         <activity android:name=".AuthActivity">
             <intent-filter>
