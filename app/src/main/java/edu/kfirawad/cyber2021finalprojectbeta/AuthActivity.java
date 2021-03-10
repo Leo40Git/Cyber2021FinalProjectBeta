@@ -1,8 +1,5 @@
 package edu.kfirawad.cyber2021finalprojectbeta;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,17 +9,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
-import edu.kfirawad.cyber2021finalprojectbeta.db.UserPermissions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class AuthActivity extends AppCompatActivity {
     private static final String TAG = "C2021FPB:Main";
 
     private boolean isRegistering;
     private FirebaseAuth fbAuth;
-    private FirebaseDatabase fbDb;
 
     private TextView tvTitle;
     private EditText etEmail, etPassword;
@@ -36,7 +33,6 @@ public class AuthActivity extends AppCompatActivity {
         setContentView(R.layout.activity_auth);
 
         fbAuth = FirebaseAuth.getInstance();
-        fbDb = FirebaseDatabase.getInstance();
 
         tvTitle = findViewById(R.id.tvTitle);
         etEmail = findViewById(R.id.etEmail);
@@ -51,8 +47,10 @@ public class AuthActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (fbAuth.getCurrentUser() != null)
-            toDashboard();
+        fbAuth.getAccessToken(true).addOnCompleteListener(task -> {
+            if (task.isSuccessful())
+                toRideSelect();
+        });
     }
 
     @Override
@@ -97,10 +95,10 @@ public class AuthActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null && task.getResult().getUser() != null) {
                         Log.d(TAG, "createAccount:success");
-                        UserPermissions userPerms = new UserPermissions();
-                        userPerms.manager = true;
-                        UserPermissions.getReference(fbDb, task.getResult().getUser()).setValue(userPerms);
-                        toDashboard();
+                        fbAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest.Builder()
+                                .setDisplayName(email)
+                                .build());
+                        toRideSelect();
                     } else {
                         Log.w(TAG, "createAccount:failure", task.getException());
                         // TODO better error display
@@ -114,7 +112,7 @@ public class AuthActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "signIn:success");
-                        toDashboard();
+                        toRideSelect();
                     } else {
                         Log.w(TAG, "signIn:failure", task.getException());
                         // TODO better error display
@@ -123,9 +121,8 @@ public class AuthActivity extends AppCompatActivity {
                 });
     }
 
-    private void toDashboard() {
-        Intent intent = new Intent(this, DashboardActivity.class);
-        // we don't want people going back to the login screen after they've already logged in
+    private void toRideSelect() {
+        Intent intent = new Intent(this, RideSelectActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
