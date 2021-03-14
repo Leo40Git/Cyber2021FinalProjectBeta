@@ -164,7 +164,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
     }
 
     public void onClick_btnNew(View view) {
-        DialogFragment fragment = new StringInputDialogFragment();
+        DialogFragment fragment = new StringInputDialogFragment("Ride Name");
         fragment.show(getSupportFragmentManager(), "ride_name_input");
     }
 
@@ -175,10 +175,17 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         startActivity(intent);
     }
 
+    private void toRideActivity(String uid) {
+        // TODO create dashboard activity, send user to that instead of manager activity
+        Intent intent = new Intent(this, ManagerActivity.class);
+        intent.putExtra(ManagerActivity.RIDE_UID, uid);
+        startActivity(intent);
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(this, "Clicked on ride \"" + rideAdapter.getRideName(position) + "\" #" + position,
-                Toast.LENGTH_SHORT).show();
+        String rideUid = rideAdapter.getItem(position);
+        toRideActivity(rideUid);
     }
 
     @Override
@@ -200,6 +207,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         dbRefRide.setValue(ride);
         dbRefUser.setValue(dbUser);
         dbRefChild.setValue(child);
+        toRideActivity(ride.uid);
     }
 
     @Override

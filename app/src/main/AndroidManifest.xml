@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Cyber2021FinalProjectBeta">
-        <activity android:name=".RideSelectActivity"></activity>
+        <activity android:name=".ManagerActivity"></activity>
+        <activity android:name=".RideSelectActivity" />
         <activity android:name=".AuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

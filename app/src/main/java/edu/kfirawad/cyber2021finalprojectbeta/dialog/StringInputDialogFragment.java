@@ -20,7 +20,19 @@ public class StringInputDialogFragment extends DialogFragment {
         void onStringInputCancelled(DialogFragment dialog);
     }
 
+    private final int hintResId;
+    private final CharSequence hintCharSeq;
     private Listener listener;
+
+    public StringInputDialogFragment(int hintResId) {
+        this.hintResId = hintResId;
+        hintCharSeq = null;
+    }
+
+    public StringInputDialogFragment(CharSequence hintCharSeq) {
+        this.hintCharSeq = hintCharSeq;
+        hintResId = View.NO_ID;
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -37,6 +49,10 @@ public class StringInputDialogFragment extends DialogFragment {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_string_input, null);
         EditText etRideName = view.findViewById(R.id.etStringInput);
+        if (hintCharSeq != null)
+            etRideName.setHint(hintCharSeq);
+        else if (hintResId > View.NO_ID)
+            etRideName.setHint(hintResId);
         return new AlertDialog.Builder(getActivity())
                 .setView(view)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
