@@ -44,31 +44,4 @@ public final class DBUser {
             rides.remove(ride.uid);
     }
 
-    @IgnoreExtraProperties
-    public static final class Permissions {
-        public boolean manager;
-        public boolean driver;
-        public boolean aide;
-        public boolean parent;
-
-        /**
-         * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
-         *     Use {@link #create(boolean, boolean, boolean, boolean)} or {@link #create()} instead.
-         */
-        @Deprecated
-        public Permissions() { }
-
-        public static @NonNull Permissions create(boolean manager, boolean driver, boolean aide, boolean parent) {
-            Permissions perms = new Permissions();
-            perms.manager = manager;
-            perms.driver = driver;
-            perms.aide = aide;
-            perms.parent = parent;
-            return perms;
-        }
-
-        public static @NonNull Permissions create() {
-            return create(false, false, false, false);
-        }
-    }
 }

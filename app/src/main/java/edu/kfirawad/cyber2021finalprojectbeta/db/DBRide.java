@@ -42,7 +42,7 @@ public final class DBRide {
         return users.containsKey(user.uid);
     }
 
-    public void addUser(@NonNull DBUser user, @NonNull DBUser.Permissions initialPerms) {
+    public void addUser(@NonNull DBUser user, @NonNull DBUserPerms initialPerms) {
         if (users == null)
             users = new HashMap<>();
         users.put(user.uid, UserData.create(user.name, initialPerms));
@@ -50,7 +50,7 @@ public final class DBRide {
     }
 
     public void addUser(@NonNull DBUser user) {
-        addUser(user, DBUser.Permissions.create());
+        addUser(user, DBUserPerms.create());
     }
 
     public void removeUser(@NonNull DBUser user) {
@@ -59,7 +59,8 @@ public final class DBRide {
         user.removeRide(this);
     }
 
-    public @Nullable DBUser.Permissions getUserPerms(@NonNull DBUser user) {
+    public @Nullable
+    DBUserPerms getUserPerms(@NonNull DBUser user) {
         if (users == null)
             return null;
         UserData data = users.get(user.uid);
@@ -68,16 +69,17 @@ public final class DBRide {
         return data.permissions;
     }
 
-    public @NonNull DBUser.Permissions getOrCreateUserPerms(@NonNull DBUser user) {
-        DBUser.Permissions perms = getUserPerms(user);
+    public @NonNull
+    DBUserPerms getOrCreateUserPerms(@NonNull DBUser user) {
+        DBUserPerms perms = getUserPerms(user);
         if (perms == null) {
-            perms = DBUser.Permissions.create();
+            perms = DBUserPerms.create();
             setUserPerms(user, perms);
         }
         return perms;
     }
 
-    public void setUserPerms(@NonNull DBUser user, @NonNull DBUser.Permissions perms) {
+    public void setUserPerms(@NonNull DBUser user, @NonNull DBUserPerms perms) {
         addUser(user, perms);
     }
 
@@ -103,7 +105,7 @@ public final class DBRide {
     @IgnoreExtraProperties
     public static final class UserData {
         public String name;
-        public DBUser.Permissions permissions;
+        public DBUserPerms permissions;
 
         /**
          * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
@@ -112,7 +114,7 @@ public final class DBRide {
         @Deprecated
         public UserData() { }
 
-        public static @NonNull UserData create(@NonNull String name, @NonNull DBUser.Permissions permissions) {
+        public static @NonNull UserData create(@NonNull String name, @NonNull DBUserPerms permissions) {
             UserData data = new UserData();
             data.name = name;
             data.permissions = permissions;

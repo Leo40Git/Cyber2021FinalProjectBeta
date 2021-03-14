@@ -31,6 +31,7 @@ import java.util.Map;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBChild;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
+import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
 import edu.kfirawad.cyber2021finalprojectbeta.dialog.StringInputDialogFragment;
 
 public class RideSelectActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
@@ -175,9 +176,8 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         startActivity(intent);
     }
 
-    private void toRideActivity(String uid) {
-        // TODO create dashboard activity, send user to that instead of manager activity
-        Intent intent = new Intent(this, ManagerActivity.class);
+    private void toDashboard(String uid) {
+        Intent intent = new Intent(this, DashboardActivity.class);
         intent.putExtra(ManagerActivity.RIDE_UID, uid);
         startActivity(intent);
     }
@@ -185,7 +185,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String rideUid = rideAdapter.getItem(position);
-        toRideActivity(rideUid);
+        toDashboard(rideUid);
     }
 
     @Override
@@ -196,18 +196,13 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
             return;
         }
         dialog.dismiss();
-        DatabaseReference dbRefChild = fbDb.getReference("children");
-        dbRefChild = dbRefChild.push();
-        DBChild child = DBChild.create(dbRefChild.getKey(), "Test Child");
         DatabaseReference dbRefRide = fbDb.getReference("rides");
         dbRefRide = dbRefRide.push();
         DBRide ride = DBRide.create(dbRefRide.getKey(), input);
-        ride.setUserPerms(dbUser, DBUser.Permissions.create(true, false, false, false));
-        ride.addChild(child);
+        ride.setUserPerms(dbUser, DBUserPerms.create(true, false, false, false));
         dbRefRide.setValue(ride);
         dbRefUser.setValue(dbUser);
-        dbRefChild.setValue(child);
-        toRideActivity(ride.uid);
+        toDashboard(ride.uid);
     }
 
     @Override
