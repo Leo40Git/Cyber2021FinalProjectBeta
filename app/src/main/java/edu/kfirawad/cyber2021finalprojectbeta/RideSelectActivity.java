@@ -27,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Map;
+import java.util.Objects;
 
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
@@ -69,10 +70,6 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
             notifyDataSetChanged();
         }
 
-        public String getRideName(int position) {
-            return rideNames[position];
-        }
-
         @Override
         public int getCount() {
             return rideCount;
@@ -104,7 +101,6 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
     private DatabaseReference dbRefUser;
     private ValueEventListener dbRefUserL;
 
-    private ListView lvRides;
     private RideAdapter rideAdapter;
 
     private DBUser dbUser;
@@ -114,7 +110,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ride_select);
 
-        lvRides = findViewById(R.id.lvRides);
+        ListView lvRides = findViewById(R.id.lvRides);
         lvRides.setOnItemClickListener(this);
         lvRides.setChoiceMode(ListView.CHOICE_MODE_NONE);
         rideAdapter = new RideAdapter(getApplicationContext());
@@ -127,6 +123,13 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         fbAuth = FirebaseAuth.getInstance();
         fbDb = FirebaseDatabase.getInstance();
         fbUser = fbAuth.getCurrentUser();
+        if (fbUser == null) {
+            Toast.makeText(this, "Log in first!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, AuthActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            return;
+        }
         dbRefUser = fbDb.getReference("users/" + fbUser.getUid());
         dbRefUserL = dbRefUser.addValueEventListener(new ValueEventListener() {
             @Override
@@ -134,13 +137,17 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
                 if (dataSnapshot.exists()) {
                     try {
                         dbUser = dataSnapshot.getValue(DBUser.class);
-                        dbUser.uid = dbRefUser.getKey();
+                        if (dbUser == null)
+                            throw new Exception("dataSnapshot claims it exists, but retrieved value was null!");
+                        dbUser.uid = Objects.requireNonNull(dbRefUser.getKey());
                     } catch (Exception e) {
                         Log.e(TAG, "dbRefUserL:onDataChange:getValue:exception", e);
                         return;
                     }
                 } else {
-                    dbUser = DBUser.create(fbUser.getUid(), fbUser.getDisplayName(), fbUser.getEmail());
+                    dbUser = DBUser.create(fbUser.getUid(),
+                            Objects.requireNonNull(fbUser.getDisplayName()),
+                            Objects.requireNonNull(fbUser.getEmail()));
                     dbRefUser.setValue(dbUser);
                 }
                 rideAdapter.setRides(dbUser.rides);
@@ -197,7 +204,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         dialog.dismiss();
         DatabaseReference dbRefRide = fbDb.getReference("rides");
         dbRefRide = dbRefRide.push();
-        DBRide ride = DBRide.create(dbRefRide.getKey(), input);
+        DBRide ride = DBRide.create(Objects.requireNonNull(dbRefRide.getKey()), input);
         ride.setUserPerms(dbUser, DBUserPerms.create(true, false, false, false));
         dbRefRide.setValue(ride);
         dbRefUser.setValue(dbUser);

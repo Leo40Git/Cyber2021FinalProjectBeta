@@ -14,6 +14,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Objects;
+
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 
 import static edu.kfirawad.cyber2021finalprojectbeta.DashboardActivity.RIDE_UID;
@@ -54,7 +56,9 @@ public class ManagerActivity extends AppCompatActivity {
                 if (dataSnapshot.exists()) {
                     try {
                         dbRide = dataSnapshot.getValue(DBRide.class);
-                        dbRide.uid = dbRefRide.getKey();
+                        if (dbRide == null)
+                            throw new Exception("dataSnapshot claims it exists, but retrieved value was null!");
+                        dbRide.uid = Objects.requireNonNull(dbRefRide.getKey());
                     } catch (Exception e) {
                         Log.e(TAG, "dbRefRideL:onDataChange:getValue:exception", e);
                         return;

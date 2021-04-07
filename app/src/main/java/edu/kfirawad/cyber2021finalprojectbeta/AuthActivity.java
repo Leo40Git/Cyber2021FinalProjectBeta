@@ -108,7 +108,7 @@ public class AuthActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null && task.getResult().getUser() != null) {
                         Log.d(TAG, "createAccount:success");
-                        fbAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest.Builder()
+                        task.getResult().getUser().updateProfile(new UserProfileChangeRequest.Builder()
                                 .setDisplayName(name)
                                 .build());
                         toRideSelect();
