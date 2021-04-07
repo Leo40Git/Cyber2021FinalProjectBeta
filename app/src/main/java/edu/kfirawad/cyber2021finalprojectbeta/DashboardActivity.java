@@ -1,5 +1,6 @@
 package edu.kfirawad.cyber2021finalprojectbeta;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -45,7 +46,8 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        rideUid = savedInstanceState.getString(RIDE_UID);
+        Intent i = getIntent();
+        rideUid = i.getStringExtra(RIDE_UID);
         if (rideUid == null) {
             Toast.makeText(this, "Missing ride UID", Toast.LENGTH_LONG).show();
             finish();
@@ -146,7 +148,7 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         DBUserPerms userPerms = null;
-        if (dbUser == null || dbRide == null)
+        if (dbUser != null && dbRide != null)
             userPerms = dbRide.getUserPerms(dbUser);
         if (userPerms == null)
             userPerms = DEFAULT_PERMISSIONS;
@@ -175,5 +177,18 @@ public class DashboardActivity extends AppCompatActivity {
             return;
         menuItem.setVisible(enabled);
         menuItem.setEnabled(enabled);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent i = null;
+        int id = item.getItemId();
+        if (id == R.id.menuManager)
+            i = new Intent(this, ManagerActivity.class);
+        if (i != null) {
+            i.putExtra(RIDE_UID, rideUid);
+            startActivity(i);
+        }
+        return true;
     }
 }

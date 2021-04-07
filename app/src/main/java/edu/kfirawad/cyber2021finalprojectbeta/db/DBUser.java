@@ -14,21 +14,23 @@ public final class DBUser {
     @Exclude
     public @NonNull String uid;
     public @NotNull String name;
+    public @NotNull String email;
     public @NotNull Map<String, String> rides;
 
     /**
      * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
-     *     Use {@link #create(String, String)} instead.
+     *     Use {@link #create(String, String, String)} instead.
      */
     @Deprecated
     public DBUser() {
         uid = "";
     }
 
-    public static @NonNull DBUser create(@NonNull String uid, @NonNull String name) {
+    public static @NonNull DBUser create(@NonNull String uid, @NonNull String name, @NonNull String email) {
         DBUser user = new DBUser();
         user.uid = uid;
         user.name = name;
+        user.email = email;
         user.rides = new HashMap<>();
         return user;
     }

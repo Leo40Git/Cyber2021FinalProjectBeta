@@ -40,7 +40,7 @@ public class StringInputDialogFragment extends DialogFragment {
         try {
             listener = (Listener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement NewRideDialogListener");
+            throw new ClassCastException(context.toString() + " must implement StringInputDialogFragment.Listener");
         }
     }
 

@@ -28,7 +28,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Map;
 
-import edu.kfirawad.cyber2021finalprojectbeta.db.DBChild;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
@@ -141,7 +140,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
                         return;
                     }
                 } else {
-                    dbUser = DBUser.create(fbUser.getUid(), fbUser.getDisplayName());
+                    dbUser = DBUser.create(fbUser.getUid(), fbUser.getDisplayName(), fbUser.getEmail());
                     dbRefUser.setValue(dbUser);
                 }
                 rideAdapter.setRides(dbUser.rides);
@@ -178,7 +177,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
 
     private void toDashboard(String uid) {
         Intent intent = new Intent(this, DashboardActivity.class);
-        intent.putExtra(ManagerActivity.RIDE_UID, uid);
+        intent.putExtra(DashboardActivity.RIDE_UID, uid);
         startActivity(intent);
     }
 
