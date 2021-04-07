@@ -26,6 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
@@ -39,45 +40,42 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
     private static final String TAG = "C2021FPB:RideSelect";
 
     private static final class RideAdapter extends BaseAdapter {
+        private static final class Entry {
+            public final String id, name;
+
+            public Entry(String id, String name) {
+                this.id = id;
+                this.name = name;
+            }
+        }
+
         private final LayoutInflater inflater;
-        private int rideCount;
-        private String[] rideNames, rideIds;
+        private final ArrayList<Entry> entries;
 
         public RideAdapter(Context ctx) {
             inflater = LayoutInflater.from(ctx);
-        }
-
-        private void removeAllRides() {
-            rideCount = 0;
-            rideNames = new String[0];
-            rideIds = new String[0];
+            entries = new ArrayList<>();
         }
 
         public void setRides(@Nullable Map<String, String> rides) {
             if (rides == null) {
-                removeAllRides();
+                entries.clear();
                 return;
             }
-            rideCount = rides.size();
-            rideNames = new String[rideCount];
-            rideIds = new String[rideCount];
-            int i = 0;
-            for (Map.Entry<String, String> entry : rides.entrySet()) {
-                rideNames[i] = entry.getValue();
-                rideIds[i] = entry.getKey();
-                i++;
-            }
+            entries.ensureCapacity(rides.size());
+            for (Map.Entry<String, String> entry : rides.entrySet())
+                entries.add(new Entry(entry.getKey(), entry.getValue()));
             notifyDataSetChanged();
         }
 
         @Override
         public int getCount() {
-            return rideCount;
+            return entries.size();
         }
 
         @Override
         public String getItem(int position) {
-            return rideIds[position];
+            return entries.get(position).id;
         }
 
         @Override
@@ -88,9 +86,9 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null)
-                convertView = inflater.inflate(R.layout.support_simple_spinner_dropdown_item, parent, false);
+                convertView = inflater.inflate(R.layout.ride_select_list_item, parent, false);
             TextView tv = convertView.findViewById(android.R.id.text1);
-            tv.setText(rideNames[position]);
+            tv.setText(entries.get(position).name);
             return convertView;
         }
     }
