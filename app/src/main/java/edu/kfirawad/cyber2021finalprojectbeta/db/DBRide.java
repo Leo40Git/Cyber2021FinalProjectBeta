@@ -11,9 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public final class DBRide {
-    @Exclude
-    public @NonNull String uid;
+public final class DBRide extends DBObject {
     public @NotNull String name;
     public @NotNull Map<String, UserData> users;
     public @NotNull Map<String, String> children;
@@ -24,7 +22,7 @@ public final class DBRide {
      */
     @Deprecated
     public DBRide() {
-        uid = "";
+        super();
     }
 
     public static @NonNull DBRide create(@NonNull String uid, @NonNull String name) {
@@ -59,8 +57,7 @@ public final class DBRide {
         user.removeRide(this);
     }
 
-    public @Nullable
-    DBUserPerms getUserPerms(@NonNull DBUser user) {
+    public @Nullable DBUserPerms getUserPerms(@NonNull DBUser user) {
         if (users == null)
             return null;
         UserData data = users.get(user.uid);
@@ -69,8 +66,7 @@ public final class DBRide {
         return data.permissions;
     }
 
-    public @NonNull
-    DBUserPerms getOrCreateUserPerms(@NonNull DBUser user) {
+    public @NonNull DBUserPerms getOrCreateUserPerms(@NonNull DBUser user) {
         DBUserPerms perms = getUserPerms(user);
         if (perms == null) {
             perms = DBUserPerms.create();

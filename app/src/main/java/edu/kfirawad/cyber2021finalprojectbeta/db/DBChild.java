@@ -10,30 +10,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public final class DBChild {
-    @Exclude
-    public @NonNull String uid;
-    public @NotNull String name;
-    public @NotNull Map<String, String> rides;
-
+public final class DBChild extends DBRideObject {
     /**
      * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
      *     Use {@link #create(String, String)} instead.
      */
     @Deprecated
     public DBChild() {
-        uid = "";
-    }
-
-    public void addRide(@NonNull DBRide ride) {
-        if (rides == null)
-            rides = new HashMap<>();
-        rides.put(ride.uid, ride.name);
-    }
-
-    public void removeRide(@NonNull DBRide ride) {
-        if (rides != null)
-            rides.remove(ride.uid);
+        super();
     }
 
     public static @NonNull DBChild create(@NonNull String uid, @NonNull String name) {

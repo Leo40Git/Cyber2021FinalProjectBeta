@@ -10,12 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public final class DBUser {
-    @Exclude
-    public @NonNull String uid;
-    public @NotNull String name;
+public final class DBUser extends DBRideObject {
     public @NotNull String email;
-    public @NotNull Map<String, String> rides;
 
     /**
      * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
@@ -23,7 +19,7 @@ public final class DBUser {
      */
     @Deprecated
     public DBUser() {
-        uid = "";
+        super();
     }
 
     public static @NonNull DBUser create(@NonNull String uid, @NonNull String name, @NonNull String email) {
@@ -34,16 +30,4 @@ public final class DBUser {
         user.rides = new HashMap<>();
         return user;
     }
-
-    public void addRide(@NonNull DBRide ride) {
-        if (rides == null)
-            rides = new HashMap<>();
-        rides.put(ride.uid, ride.name);
-    }
-
-    public void removeRide(@NonNull DBRide ride) {
-        if (rides != null)
-            rides.remove(ride.uid);
-    }
-
 }

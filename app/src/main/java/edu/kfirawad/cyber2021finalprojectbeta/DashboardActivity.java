@@ -143,15 +143,13 @@ public class DashboardActivity extends AppCompatActivity {
         return true;
     }
 
-    private static final DBUserPerms DEFAULT_PERMISSIONS = DBUserPerms.create();
-
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         DBUserPerms userPerms = null;
         if (dbUser != null && dbRide != null)
             userPerms = dbRide.getUserPerms(dbUser);
         if (userPerms == null)
-            userPerms = DEFAULT_PERMISSIONS;
+            userPerms = DBUserPerms.create();
         setMenuItemEnabled(menu, R.id.menuManager, userPerms.manager);
         setMenuItemEnabled(menu, R.id.menuDriver, userPerms.driver);
         setMenuItemEnabled(menu, R.id.menuAide, userPerms.aide);
