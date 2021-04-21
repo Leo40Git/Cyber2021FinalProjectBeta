@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.IdRes;
@@ -188,5 +189,10 @@ public class DashboardActivity extends AppCompatActivity {
             startActivity(i);
         }
         return true;
+    }
+
+    public void onClick_button(View view) {
+        Intent i = new Intent(this, MapsActivity.class);
+        startActivity(i);
     }
 }
