@@ -3,7 +3,6 @@ package edu.kfirawad.cyber2021finalprojectbeta.db;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.annotations.NotNull;
 
