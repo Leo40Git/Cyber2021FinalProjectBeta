@@ -53,7 +53,7 @@ public class StringInputDialogFragment extends DialogFragment {
             etRideName.setHint(hintCharSeq);
         else if (hintResId > View.NO_ID)
             etRideName.setHint(hintResId);
-        return new AlertDialog.Builder(getActivity())
+        return new AlertDialog.Builder(requireContext())
                 .setView(view)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     String rideName = etRideName.getText().toString();
