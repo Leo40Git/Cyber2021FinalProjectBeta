@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
+import edu.kfirawad.cyber2021finalprojectbeta.db.DBLatLng;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
@@ -200,9 +201,9 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
             return;
         }
         dialog.dismiss();
-        DatabaseReference dbRefRide = fbDb.getReference("rides");
-        dbRefRide = dbRefRide.push();
-        DBRide ride = DBRide.create(Objects.requireNonNull(dbRefRide.getKey()), input);
+        DatabaseReference dbRefRide = fbDb.getReference("rides").push();
+        // TODO destination selection, somehow
+        DBRide ride = DBRide.create(Objects.requireNonNull(dbRefRide.getKey()), input, DBLatLng.create(0, 0));
         ride.setUserPerms(dbUser, DBUserPerms.create(true, false, false, false));
         dbRefRide.setValue(ride);
         dbRefUser.setValue(dbUser);

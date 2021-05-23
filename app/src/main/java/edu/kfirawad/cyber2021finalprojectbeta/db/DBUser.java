@@ -2,7 +2,6 @@ package edu.kfirawad.cyber2021finalprojectbeta.db;
 
 import androidx.annotation.NonNull;
 
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.annotations.NotNull;
 
@@ -12,6 +11,7 @@ import java.util.Map;
 @IgnoreExtraProperties
 public final class DBUser extends DBRideObject {
     public @NotNull String email;
+    public @NotNull Map<String, String> children;
 
     /**
      * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
@@ -28,6 +28,19 @@ public final class DBUser extends DBRideObject {
         user.name = name;
         user.email = email;
         user.rides = new HashMap<>();
+        user.children = new HashMap<>();
         return user;
+    }
+
+    protected void addChild(@NonNull DBChild child) {
+        if (children == null)
+            children = new HashMap<>();
+        children.put(child.uid, child.name);
+    }
+
+    public void removeChild(@NonNull DBChild child) {
+        if (children == null)
+            return;
+        children.remove(child.uid);
     }
 }

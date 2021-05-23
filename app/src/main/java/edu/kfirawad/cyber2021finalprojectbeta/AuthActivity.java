@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +22,8 @@ public class AuthActivity extends AppCompatActivity {
     private boolean isRegistering;
     private FirebaseAuth fbAuth;
 
-    private TextView tvTitle, tvName;
+    private TextView tvTitle;
+    private LinearLayout layName;
     private EditText etName, etEmail, etPassword;
     private Button btnAction;
     private TextView tvSwitchBtnDesc;
@@ -35,7 +37,7 @@ public class AuthActivity extends AppCompatActivity {
         fbAuth = FirebaseAuth.getInstance();
 
         tvTitle = findViewById(R.id.tvTitle);
-        tvName = findViewById(R.id.tvName);
+        layName = findViewById(R.id.layName);
         etName = findViewById(R.id.etName);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
@@ -70,8 +72,7 @@ public class AuthActivity extends AppCompatActivity {
     private void setMode(boolean isRegistering) {
         this.isRegistering = isRegistering;
         tvTitle.setText(isRegistering ? "Register" : "Log In");
-        tvName.setVisibility(isRegistering ? View.VISIBLE : View.GONE);
-        etName.setVisibility(isRegistering ? View.VISIBLE : View.GONE);
+        layName.setVisibility(isRegistering ? View.VISIBLE : View.GONE);
         etName.setText("");
         btnAction.setText(isRegistering ? "Register" : "Log In");
         tvSwitchBtnDesc.setText(isRegistering ? "Already have an account?" : "Don't have an account?");

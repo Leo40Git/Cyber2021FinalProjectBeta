@@ -12,22 +12,24 @@ import java.util.Map;
 @IgnoreExtraProperties
 public final class DBRide extends DBObject {
     public @NotNull String name;
+    public @NotNull DBLatLng destination;
     public @NotNull Map<String, UserData> users;
-    public @NotNull Map<String, String> children;
+    public @NotNull Map<String, ChildData> children;
 
     /**
      * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
-     *     Use {@link #create(String, String)} instead.
+     *     Use {@link #create(String, String, DBLatLng)} instead.
      */
     @Deprecated
     public DBRide() {
         super();
     }
 
-    public static @NonNull DBRide create(@NonNull String uid, @NonNull String name) {
+    public static @NonNull DBRide create(@NonNull String uid, @NonNull String name, @NonNull DBLatLng destination) {
         DBRide ride = new DBRide();
         ride.uid = uid;
         ride.name = name;
+        ride.destination = destination;
         ride.users = new HashMap<>();
         ride.children = new HashMap<>();
         return ride;
@@ -62,7 +64,7 @@ public final class DBRide extends DBObject {
         UserData data = users.get(user.uid);
         if (data == null)
             return null;
-        return data.permissions;
+        return data.perms;
     }
 
     public @NonNull DBUserPerms getOrCreateUserPerms(@NonNull DBUser user) {
@@ -87,7 +89,7 @@ public final class DBRide extends DBObject {
     public void addChild(@NonNull DBChild child) {
         if (children == null)
             children = new HashMap<>();
-        children.put(child.uid, child.name);
+        children.put(child.uid, ChildData.create(child.name, child.pickupSpot));
         child.addRide(this);
     }
 
@@ -100,19 +102,39 @@ public final class DBRide extends DBObject {
     @IgnoreExtraProperties
     public static final class UserData {
         public String name;
-        public DBUserPerms permissions;
+        public DBUserPerms perms;
 
         /**
          * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
-         *     Use {@link #create(String, String)} instead.
+         *     Use {@link #create(String, DBUserPerms)} instead.
          */
         @Deprecated
         public UserData() { }
 
-        public static @NonNull UserData create(@NonNull String name, @NonNull DBUserPerms permissions) {
+        public static @NonNull UserData create(@NonNull String name, @NonNull DBUserPerms perms) {
             UserData data = new UserData();
             data.name = name;
-            data.permissions = permissions;
+            data.perms = perms;
+            return data;
+        }
+    }
+
+    @IgnoreExtraProperties
+    public static final class ChildData {
+        public String name;
+        public DBLatLng pickupSpot;
+
+        /**
+         * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
+         *     Use {@link #create(String, DBLatLng)} instead.
+         */
+        @Deprecated
+        public ChildData() { }
+
+        public static @NonNull ChildData create(@NonNull String name, @NonNull DBLatLng pickupSpot) {
+            ChildData data = new ChildData();
+            data.name = name;
+            data.pickupSpot = pickupSpot;
             return data;
         }
     }

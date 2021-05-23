@@ -18,13 +18,13 @@ public abstract class DBRideObject extends DBObject {
         super();
     }
 
-    public void addRide(@NonNull DBRide ride) {
+    protected void addRide(@NonNull DBRide ride) {
         if (rides == null)
             rides = new HashMap<>();
         rides.put(ride.uid, ride.name);
     }
 
-    public void removeRide(@NonNull DBRide ride) {
+    protected void removeRide(@NonNull DBRide ride) {
         if (rides != null)
             rides.remove(ride.uid);
     }
