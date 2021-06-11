@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,10 +17,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.experimental.UseExperimental;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
 
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,14 +36,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
-import edu.kfirawad.cyber2021finalprojectbeta.db.DBLatLng;
-import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
-import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
-import edu.kfirawad.cyber2021finalprojectbeta.dialog.StringInputDialogFragment;
 
-public class RideSelectActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
-        StringInputDialogFragment.Listener {
+public class RideSelectActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     private static final String TAG = "C2021FPB:RideSelect";
 
     private static final class RideAdapter extends BaseAdapter {
@@ -101,7 +101,9 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
     private DatabaseReference dbRefUser;
     private ValueEventListener dbRefUserL;
 
+    private Toolbar toolbar;
     private RideAdapter rideAdapter;
+    private BadgeDrawable badgeDrawable;
 
     private DBUser dbUser;
 
@@ -110,7 +112,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ride_select);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ListView lvRides = findViewById(R.id.lvRides);
@@ -118,6 +120,9 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         lvRides.setChoiceMode(ListView.CHOICE_MODE_NONE);
         rideAdapter = new RideAdapter(getApplicationContext());
         lvRides.setAdapter(rideAdapter);
+
+        badgeDrawable = BadgeDrawable.create(this);
+        badgeDrawable.setNumber(5);
     }
 
     @Override
@@ -173,49 +178,43 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         }
     }
 
-    public void onClick_btnNew(View view) {
-        DialogFragment fragment = new StringInputDialogFragment("Ride Name");
-        fragment.show(getSupportFragmentManager(), "ride_name_input");
+    @UseExperimental(markerClass = ExperimentalBadgeUtils.class)
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.select_ride, menu);
+        BadgeUtils.attachBadgeDrawable(badgeDrawable, toolbar, R.id.menuInvites);
+        return true;
     }
 
-    public void btnSignOut_onClick(View view) {
-        fbAuth.signOut();
-        Intent intent = new Intent(this, AuthActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menuInvites) {
+            // TODO invites activity
+            return true;
+        } else if (id == R.id.menuSettings) {
+            // TODO settings
+            return true;
+        } else if (id == R.id.menuSignOut) {
+            fbAuth.signOut();
+            Intent intent = new Intent(this, AuthActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
-    private void toDashboard(String uid) {
-        Intent intent = new Intent(this, DashboardActivity.class);
-        intent.putExtra(DashboardActivity.RIDE_UID, uid);
+    public void onClick_fabCreate(View view) {
+        Intent intent = new Intent(this, RideCreateActivity.class);
         startActivity(intent);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String rideUid = rideAdapter.getItem(position);
-        toDashboard(rideUid);
-    }
-
-    @Override
-    public void onStringInputComplete(DialogFragment dialog, String input) {
-        input = input.trim();
-        if (input.isEmpty()) {
-            Toast.makeText(this, "Ride name cannot be empty", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        dialog.dismiss();
-        DatabaseReference dbRefRide = fbDb.getReference("rides").push();
-        // TODO destination selection, somehow
-        DBRide ride = DBRide.create(Objects.requireNonNull(dbRefRide.getKey()), input, DBLatLng.create(0, 0));
-        ride.setUserPerms(dbUser, DBUserPerms.create(true, false, false, false));
-        dbRefRide.setValue(ride);
-        dbRefUser.setValue(dbUser);
-        toDashboard(ride.uid);
-    }
-
-    @Override
-    public void onStringInputCancelled(DialogFragment dialog) {
-        dialog.dismiss();
+        Intent intent = new Intent(this, DashboardActivity.class);
+        intent.putExtra(DashboardActivity.RIDE_UID, rideUid);
+        startActivity(intent);
     }
 }

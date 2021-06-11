@@ -9,13 +9,11 @@ import java.util.HashMap;
 
 @IgnoreExtraProperties
 public final class DBChild extends DBRideObject {
-    public @NotNull String parentUid;
-    public @NotNull String parentName;
-    public @NotNull DBLatLng pickupSpot;
+    public @NotNull String parentUid, parentName, pickupSpot;
 
     /**
      * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
-     *     Use {@link #create(String, String, DBUser, DBLatLng)} instead.
+     *     Use {@link #create(String, String, DBUser, String)} instead.
      */
     @Deprecated
     public DBChild() {
@@ -23,7 +21,7 @@ public final class DBChild extends DBRideObject {
     }
 
     public static @NonNull DBChild create(@NonNull String uid, @NonNull String name,
-                                          @NonNull DBUser parent, @NonNull DBLatLng pickupSpot) {
+                                          @NonNull DBUser parent, @NonNull String pickupSpot) {
         DBChild child = new DBChild();
         child.uid = uid;
         child.name = name;

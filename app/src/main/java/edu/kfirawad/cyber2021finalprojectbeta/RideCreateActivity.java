@@ -1,30 +1,23 @@
 package edu.kfirawad.cyber2021finalprojectbeta;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
-import android.location.Location;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TimePicker;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class RideCreateActivity extends AppCompatActivity implements OnMapReadyCallback,
-        GoogleMap.OnMapClickListener,
-        GoogleMap.OnMyLocationButtonClickListener,
-        GoogleMap.OnMyLocationClickListener {
-    private static final int PERMISSION_REQUEST_LOCATION = 0;
+import java.util.Calendar;
+import java.util.Locale;
 
-    private EditText etName;
-    private GoogleMap map;
+import edu.kfirawad.cyber2021finalprojectbeta.dialog.TimePickerFragment;
+
+public class RideCreateActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
+    private EditText etName, etDestination;
+    private TextView tvStartTime;
+    private int startHour, startMinute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,48 +25,22 @@ public class RideCreateActivity extends AppCompatActivity implements OnMapReadyC
         setContentView(R.layout.activity_ride_create);
 
         etName = findViewById(R.id.etName);
+        etDestination = findViewById(R.id.etDestination);
+        tvStartTime = findViewById(R.id.tvStartTime);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        if (mapFragment == null)
-            throw new InternalError("Map fragment missing!");
-        mapFragment.getMapAsync(this);
+        final Calendar c = Calendar.getInstance();
+        startHour = c.get(Calendar.HOUR_OF_DAY);
+        startMinute = c.get(Calendar.MINUTE);
+        updateStartTime();
     }
 
-    @Override
-    public void onMapReady(@NonNull GoogleMap map) {
-        this.map = map;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            setupMyLocation();
-        } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[] { Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION },
-                    PERMISSION_REQUEST_LOCATION);
-        }
+    private void updateStartTime() {
+        tvStartTime.setText(String.format(Locale.ROOT, "%02d:%02d", startHour, startMinute));
     }
 
-    @SuppressLint("MissingPermission") // only called if the permissions have been granted
-    private void setupMyLocation() {
-        map.setMyLocationEnabled(true);
-        map.setOnMyLocationButtonClickListener(this);
-        map.setOnMyLocationClickListener(this);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == PERMISSION_REQUEST_LOCATION) {
-            boolean allGranted = true;
-            for (int grantResult : grantResults) {
-                if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                    allGranted = false;
-                    break;
-                }
-            }
-            if (allGranted)
-                setupMyLocation();
-            // TODO some sort of error message if not granted
-        }
+    public void onClick_btnChangeTime(View view) {
+        TimePickerFragment tpFrag = new TimePickerFragment();
+        tpFrag.show(getSupportFragmentManager(), "startTimePicker");
     }
 
     public void onClick_btnCreate(View view) {
@@ -81,17 +48,9 @@ public class RideCreateActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     @Override
-    public void onMapClick(@NonNull LatLng latLng) {
-
-    }
-
-    @Override
-    public boolean onMyLocationButtonClick() {
-        return false;
-    }
-
-    @Override
-    public void onMyLocationClick(@NonNull Location location) {
-
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        startHour = hourOfDay;
+        startMinute = minute;
+        updateStartTime();
     }
 }

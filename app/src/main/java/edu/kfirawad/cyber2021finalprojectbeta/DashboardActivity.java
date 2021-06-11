@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.IdRes;
@@ -27,14 +26,12 @@ import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
 
 public class DashboardActivity extends AppCompatActivity {
-    public static final String RIDE_UID = "RIDE_UID";
+    public static final String RIDE_UID = "edu.kfirawad.cyber2021finalprojectbeta.RideUid";
 
     private static final String TAG = "C2021FPB:Dashboard";
 
     private String rideUid;
 
-    private FirebaseAuth fbAuth;
-    private FirebaseDatabase fbDb;
     private DBUser dbUser;
     private DatabaseReference dbRefUser;
     private ValueEventListener dbRefUserL;
@@ -59,23 +56,30 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        fbAuth = FirebaseAuth.getInstance();
+        FirebaseAuth fbAuth = FirebaseAuth.getInstance();
         FirebaseUser fbUser = fbAuth.getCurrentUser();
         if (fbUser == null) {
             Toast.makeText(this, "Log in first!", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
-        fbDb = FirebaseDatabase.getInstance();
+        FirebaseDatabase fbDb = FirebaseDatabase.getInstance();
 
-        dbRefUser = fbDb.getReference("users/" + fbUser.getUid());
+        final String userId = fbUser.getUid();
+        dbRefUser = fbDb.getReference("users/" + userId);
         dbRefUserL = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     try {
                         dbUser = dataSnapshot.getValue(DBUser.class);
-                        dbUser.uid = dbRefUser.getKey();
+                        if (dbUser == null) {
+                            dbUser = DBUser.create(userId,
+                                    Objects.requireNonNull(fbUser.getEmail()),
+                                    Objects.requireNonNull(fbUser.getDisplayName()));
+                            dbRefUser.setValue(dbUser);
+                        }
+                        dbUser.uid = userId;
                     } catch (Exception e) {
                         dbUser = null;
                         Log.e(TAG, "dbRefUserL:onDataChange:getValue:exception", e);
@@ -101,7 +105,9 @@ public class DashboardActivity extends AppCompatActivity {
                 if (dataSnapshot.exists()) {
                     try {
                         dbRide = dataSnapshot.getValue(DBRide.class);
-                        dbRide.uid = dbRefRide.getKey();
+                        if (dbRide == null)
+                            throw new NullPointerException("Ride \"" + rideUid + "\" does not exist?!");
+                        dbRide.uid = rideUid;
                     } catch (Exception e) {
                         dbRide = null;
                         Log.e(TAG, "dbRefRideL:onDataChange:getValue:exception", e);
@@ -140,7 +146,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.dashboard, menu);
         return true;
     }
 
@@ -180,19 +186,23 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        Intent i = null;
         int id = item.getItemId();
-        if (id == R.id.menuManager)
-            i = new Intent(this, ManagerActivity.class);
-        if (i != null) {
-            i.putExtra(RIDE_UID, rideUid);
-            startActivity(i);
+        if (id == R.id.menuManager) {
+            // TODO manager activity
+            return true;
+        } else if (id == R.id.menuDriver) {
+            // TODO driver activity
+            return true;
+        } else if (id == R.id.menuAide) {
+            // TODO aide activity
+            return true;
+        } else if (id == R.id.menuParent) {
+            // TODO parent activity
+            return true;
+        } else if (id == R.id.menuSettings) {
+            // TODO settings
+            return true;
         }
-        return true;
-    }
-
-    public void onClick_button(View view) {
-        Intent i = new Intent(this, MapsActivity.class);
-        startActivity(i);
+        return super.onOptionsItemSelected(item);
     }
 }

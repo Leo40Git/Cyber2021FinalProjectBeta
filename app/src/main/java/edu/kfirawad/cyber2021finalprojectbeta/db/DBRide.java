@@ -11,25 +11,29 @@ import java.util.Map;
 
 @IgnoreExtraProperties
 public final class DBRide extends DBObject {
-    public @NotNull String name;
-    public @NotNull DBLatLng destination;
+    public @NotNull String name, destination;
+    public int startHour, startMinute;
     public @NotNull Map<String, UserData> users;
     public @NotNull Map<String, ChildData> children;
 
     /**
      * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
-     *     Use {@link #create(String, String, DBLatLng)} instead.
+     *     Use {@link #create(String, String, String, int, int)} instead.
      */
     @Deprecated
     public DBRide() {
         super();
     }
 
-    public static @NonNull DBRide create(@NonNull String uid, @NonNull String name, @NonNull DBLatLng destination) {
+    public static @NonNull DBRide create(@NonNull String uid,
+                                         @NonNull String name, @NonNull String destination,
+                                         int startHour, int startMinute) {
         DBRide ride = new DBRide();
         ride.uid = uid;
         ride.name = name;
         ride.destination = destination;
+        ride.startHour = startHour;
+        ride.startMinute = startMinute;
         ride.users = new HashMap<>();
         ride.children = new HashMap<>();
         return ride;
@@ -89,7 +93,8 @@ public final class DBRide extends DBObject {
     public void addChild(@NonNull DBChild child) {
         if (children == null)
             children = new HashMap<>();
-        children.put(child.uid, ChildData.create(child.name, child.pickupSpot));
+        children.put(child.uid,
+                ChildData.create(child.name, child.parentUid, child.parentName, child.pickupSpot));
         child.addRide(this);
     }
 
@@ -101,8 +106,8 @@ public final class DBRide extends DBObject {
 
     @IgnoreExtraProperties
     public static final class UserData {
-        public String name;
-        public DBUserPerms perms;
+        public @NotNull String name;
+        public @NotNull DBUserPerms perms;
 
         /**
          * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
@@ -121,19 +126,22 @@ public final class DBRide extends DBObject {
 
     @IgnoreExtraProperties
     public static final class ChildData {
-        public String name;
-        public DBLatLng pickupSpot;
+        public @NotNull String name, parentUid, parentName, pickupSpot;
 
         /**
          * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
-         *     Use {@link #create(String, DBLatLng)} instead.
+         *     Use {@link #create(String, String, String, String)} instead.
          */
         @Deprecated
         public ChildData() { }
 
-        public static @NonNull ChildData create(@NonNull String name, @NonNull DBLatLng pickupSpot) {
+        public static @NonNull ChildData create(@NonNull String name,
+                                                @NonNull String parentUid, @NonNull String parentName,
+                                                @NonNull String pickupSpot) {
             ChildData data = new ChildData();
             data.name = name;
+            data.parentUid = parentUid;
+            data.parentName = parentName;
             data.pickupSpot = pickupSpot;
             return data;
         }

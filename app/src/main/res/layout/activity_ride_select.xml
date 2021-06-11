@@ -21,22 +21,19 @@
         android:text="Select a ride:" />
 
     <ListView
-        android:id="@+id/lvRides"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
+            android:id="@+id/lvRides"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
-    <Button
-        android:id="@+id/btnNew"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onClick_btnNew"
-        android:text="Create Ride" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabCreate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            app:srcCompat="@drawable/ic_create"
+            android:contentDescription="Create Ride"
+            android:layout_margin="16dp"
+            android:onClick="onClick_fabCreate" />
 
-    <Button
-        android:id="@+id/btnSignOut"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="btnSignOut_onClick"
-        android:text="Sign Out" />
 </LinearLayout>
