@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import edu.kfirawad.cyber2021finalprojectbeta.R;
 
 public class UserListFragment extends Fragment {
@@ -36,7 +38,8 @@ public class UserListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user_list, container, false);
-        // TODO set add button visibility
+        FloatingActionButton fabAdd = view.findViewById(R.id.fabAdd);
+        fabAdd.setVisibility(showAddButton ? View.VISIBLE : View.GONE);
         return view;
     }
 }
