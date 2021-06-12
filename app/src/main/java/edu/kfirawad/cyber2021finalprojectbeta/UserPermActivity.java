@@ -215,19 +215,28 @@ public abstract class UserPermActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menuManager) {
-            // TODO manager activity
+            if (getClass() != ManagerActivity.class) {
+                Intent i = new Intent(this, ManagerActivity.class);
+                startActivity(i);
+            }
             return true;
         } else if (id == R.id.menuDriver) {
-            // TODO driver activity
+            if (getClass() != DriverActivity.class) {
+                Intent i = new Intent(this, DriverActivity.class);
+                startActivity(i);
+            }
             return true;
         } else if (id == R.id.menuAide) {
-            // TODO aide activity
+            if (getClass() != AideActivity.class) {
+                Intent i = new Intent(this, AideActivity.class);
+                startActivity(i);
+            }
             return true;
         } else if (id == R.id.menuParent) {
-            // TODO parent activity
-            return true;
-        } else if (id == R.id.menuSettings) {
-            // TODO settings
+            if (getClass() != ParentActivity.class) {
+                Intent i = new Intent(this, ParentActivity.class);
+                startActivity(i);
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);

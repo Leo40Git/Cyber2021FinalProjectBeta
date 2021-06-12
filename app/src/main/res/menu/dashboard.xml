@@ -12,7 +12,4 @@
     <item
         android:id="@+id/menuParent"
         android:title="Parent" />
-    <item
-            android:title="Settings"
-            android:id="@+id/menuSettings" />
 </menu>

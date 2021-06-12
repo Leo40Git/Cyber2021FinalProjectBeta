@@ -121,7 +121,6 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         lvRides.setAdapter(rideAdapter);
 
         badgeDrawable = BadgeDrawable.create(this);
-        badgeDrawable.setNumber(5);
     }
 
     @Override
@@ -189,10 +188,8 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menuInvites) {
-            // TODO invites activity
-            return true;
-        } else if (id == R.id.menuSettings) {
-            // TODO settings
+            Intent i = new Intent(this, InvitesActivity.class);
+            startActivity(i);
             return true;
         } else if (id == R.id.menuLogOut) {
             fbAuth.signOut();
@@ -213,6 +210,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String rideUid = rideAdapter.getItem(position);
         Intent intent = new Intent(this, DashboardActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(DashboardActivity.RIDE_UID, rideUid);
         startActivity(intent);
     }

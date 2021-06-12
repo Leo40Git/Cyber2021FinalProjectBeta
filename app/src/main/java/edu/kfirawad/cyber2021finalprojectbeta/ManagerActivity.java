@@ -1,5 +1,6 @@
 package edu.kfirawad.cyber2021finalprojectbeta;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -91,7 +92,9 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
 
     @Override
     public void onAddUserButtonClicked() {
-        // TODO add user dialog
+        Intent i = new Intent(this, AddUserActivity.class);
+        i.putExtra(RIDE_UID, rideUid);
+        startActivity(i);
     }
 
     @Override
@@ -103,6 +106,8 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
 
     @Override
     public void onCreateChildButtonPressed() {
-        // TODO create child dialog
+        Intent i = new Intent(this, CreateChildActivity.class);
+        i.putExtra(RIDE_UID, rideUid);
+        startActivity(i);
     }
 }

@@ -8,9 +8,6 @@
             android:id="@+id/menuInvites"
             android:icon="@drawable/ic_invites" />
     <item
-            android:title="Settings"
-            android:id="@+id/menuSettings" />
-    <item
             android:title="Log Out"
             app:showAsAction="never"
             android:id="@+id/menuLogOut" />

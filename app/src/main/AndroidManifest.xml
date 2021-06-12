@@ -15,6 +15,10 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.Cyber2021FinalProjectBeta">
+        <activity android:name=".CreditsActivity"></activity>
+        <activity android:name=".InvitesActivity" />
+        <activity android:name=".CreateChildActivity" />
+        <activity android:name=".AddUserActivity" />
         <activity android:name=".ManagerActivity" />
         <activity android:name=".RideCreateActivity" />
         <!--
