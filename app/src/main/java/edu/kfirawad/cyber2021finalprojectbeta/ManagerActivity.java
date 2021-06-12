@@ -34,8 +34,9 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
                 return UserListFragment.newInstance(ManagerActivity.this, rideUid,
                         true, dbUser.uid);
             case 1: // Children
-                return ChildListFragment.newInstance(ManagerActivity.this, rideUid,
-                        true);
+                return ChildListFragment.newInstance(ManagerActivity.this,
+                        (uid, data) -> true,
+                        rideUid, true);
             default:
                 throw new IndexOutOfBoundsException(position + "");
             }
@@ -85,13 +86,23 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
     @Override
     public void onUserSelected(@NonNull String uid, @NonNull String name,
                                @NonNull DBUserPerms perms) {
-        // TODO open details dialog
+        // TODO user details dialog
+    }
+
+    @Override
+    public void onAddUserButtonClicked() {
+        // TODO add user dialog
     }
 
     @Override
     public void onChildSelected(@NonNull String uid, @NonNull String name,
                                 @NonNull String parentUid, @NonNull String parentName,
                                 @NonNull String pickupSpot) {
-        // TODO open details dialog
+        // TODO child details dialog
+    }
+
+    @Override
+    public void onCreateChildButtonPressed() {
+        // TODO create child dialog
     }
 }

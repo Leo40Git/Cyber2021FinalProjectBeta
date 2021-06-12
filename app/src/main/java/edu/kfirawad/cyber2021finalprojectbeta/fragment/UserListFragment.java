@@ -1,18 +1,21 @@
 package edu.kfirawad.cyber2021finalprojectbeta.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -28,16 +31,36 @@ import edu.kfirawad.cyber2021finalprojectbeta.R;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
 
-public class UserListFragment extends Fragment {
+public class UserListFragment extends Fragment implements AdapterView.OnItemClickListener {
     @FunctionalInterface
     public interface Callback {
         void onUserSelected(@NonNull String uid, @NonNull String name, @NonNull DBUserPerms perms);
+
+        default void onAddUserButtonClicked() { }
+
+        @SuppressLint("SetTextI18n")
+        default @NonNull View getUserItemView(@NonNull ViewGroup parent, @Nullable View convertView,
+                                              @NonNull String uid, @NonNull String name,
+                                              @NonNull DBUserPerms perms,
+                                              @Nullable String myUserUid) {
+            if (convertView == null)
+                convertView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.list_item, parent, false);
+            TextView tvTitle = convertView.findViewById(R.id.tvTitle);
+            TextView tvDesc = convertView.findViewById(R.id.tvDesc);
+            if (uid.equals(myUserUid))
+                tvTitle.setText(name + " (you)");
+            else
+                tvTitle.setText(name);
+            tvDesc.setText(perms.toString());
+            return convertView;
+        }
     }
 
-    private static final String TAG = "C2021FPB:frag:UserList";
+    static final class Adapter extends BaseAdapter {
 
-    static final class Adapter extends RecyclerView.Adapter<ListViewHolder> {
-        public static final class Entry {
+
+        static final class Entry {
             public final @NonNull String uid, name;
             public final @NonNull DBUserPerms perms;
 
@@ -48,40 +71,40 @@ public class UserListFragment extends Fragment {
             }
         }
 
-        public final ArrayList<Entry> entries = new ArrayList<>();
-
         private final @NonNull Callback callback;
         private final @Nullable String myUserUid;
-
-        Adapter(@NonNull Callback callback, @Nullable String myUserUid) {
+        public Adapter(@NonNull Callback callback, @Nullable String myUserUid) {
             this.callback = callback;
             this.myUserUid = myUserUid;
         }
 
-        @NonNull
-        @Override
-        public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item, parent, false);
-            return new ListViewHolder(view);
-        }
+        public final ArrayList<Entry> entries = new ArrayList<>();
 
         @Override
-        public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
-            Entry entry = entries.get(position);
-            if (entry.uid.equals(myUserUid))
-                holder.setTitle(entry.name + " (you)");
-            else
-                holder.setTitle(entry.name);
-            holder.setDescription(entry.perms.toString());
-            holder.setOnClickListener(() -> callback.onUserSelected(entry.uid, entry.name, entry.perms));
-        }
-
-        @Override
-        public int getItemCount() {
+        public int getCount() {
             return entries.size();
         }
+
+        @Override
+        public Entry getItem(int position) {
+            return entries.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @SuppressLint("SetTextI18n")
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Entry entry = getItem(position);
+            return callback.getUserItemView(parent, convertView,
+                    entry.uid, entry.name, entry.perms, myUserUid);
+        }
     }
+
+    private static final String TAG = "C2021FPB:frag:UserList";
 
     private static final String ARG_RIDE_UID = "rideUid";
     private static final String ARG_SHOW_ADD_BUTTON = "showAddButton";
@@ -191,11 +214,20 @@ public class UserListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user_list, container, false);
-        RecyclerView rvUsers = view.findViewById(R.id.rvUsers);
+        ListView lvUsers = view.findViewById(R.id.lvUsers);
         adapter = new Adapter(callback, myUserUid);
-        rvUsers.setAdapter(adapter);
+        lvUsers.setAdapter(adapter);
+        lvUsers.setChoiceMode(ListView.CHOICE_MODE_NONE);
+        lvUsers.setOnItemClickListener(this);
         FloatingActionButton fabAdd = view.findViewById(R.id.fabAdd);
         fabAdd.setVisibility(showAddButton ? View.VISIBLE : View.GONE);
+        fabAdd.setOnClickListener(v -> callback.onAddUserButtonClicked());
         return view;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Adapter.Entry entry = adapter.getItem(position);
+        callback.onUserSelected(entry.uid, entry.name, entry.perms);
     }
 }

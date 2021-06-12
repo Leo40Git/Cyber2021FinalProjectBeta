@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.IdRes;
+import androidx.annotation.MenuRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -161,9 +162,13 @@ public abstract class UserPermActivity extends AppCompatActivity {
         }
     }
 
+    protected @MenuRes int getOptionsMenu() {
+        return R.menu.dashboard;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.dashboard, menu);
+        getMenuInflater().inflate(getOptionsMenu(), menu);
         return true;
     }
 

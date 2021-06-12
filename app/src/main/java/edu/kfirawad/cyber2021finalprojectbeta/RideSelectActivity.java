@@ -89,8 +89,8 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null)
                 convertView = inflater.inflate(R.layout.ride_select_list_item, parent, false);
-            TextView tv = convertView.findViewById(android.R.id.text1);
-            tv.setText(entries.get(position).name);
+            TextView tvTitle = convertView.findViewById(R.id.tvTitle);
+            tvTitle.setText(entries.get(position).name);
             return convertView;
         }
     }

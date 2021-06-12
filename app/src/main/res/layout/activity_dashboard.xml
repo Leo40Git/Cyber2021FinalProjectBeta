@@ -13,4 +13,58 @@
             android:theme="?attr/actionBarTheme"
             android:minHeight="?attr/actionBarSize"
             android:id="@+id/toolbar" />
+
+    <Button
+            android:text="Manager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnManager"
+            android:enabled="false"
+            android:onClick="onClick_btnManager" />
+
+    <Button
+            android:text="Driver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnDriver"
+            android:enabled="false"
+            android:onClick="onClick_btnDriver" />
+
+    <Button
+            android:text="Parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnParent"
+            android:enabled="false"
+            android:onClick="onClick_btnParent" />
+
+    <Button
+            android:text="Aide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnAide"
+            android:enabled="false"
+            android:onClick="onClick_btnAide" />
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <Button
+                android:text="Exit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnExit"
+                android:layout_weight="1"
+                android:onClick="onClick_btnExit" />
+
+        <Button
+                android:text="Credits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnCredits"
+                android:layout_weight="1"
+                android:onClick="onClick_btnCredits" />
+    </LinearLayout>
 </LinearLayout>
