@@ -15,7 +15,8 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.Cyber2021FinalProjectBeta">
-        <activity android:name=".RideCreateActivity"></activity>
+        <activity android:name=".ManagerActivity" />
+        <activity android:name=".RideCreateActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

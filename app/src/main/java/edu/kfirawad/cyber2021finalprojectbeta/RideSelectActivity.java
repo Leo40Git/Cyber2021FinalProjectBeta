@@ -96,7 +96,6 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
     }
 
     private FirebaseAuth fbAuth;
-    private FirebaseDatabase fbDb;
     private FirebaseUser fbUser;
     private DatabaseReference dbRefUser;
     private ValueEventListener dbRefUserL;
@@ -129,7 +128,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
     protected void onStart() {
         super.onStart();
         fbAuth = FirebaseAuth.getInstance();
-        fbDb = FirebaseDatabase.getInstance();
+        FirebaseDatabase fbDb = FirebaseDatabase.getInstance();
         fbUser = fbAuth.getCurrentUser();
         if (fbUser == null) {
             Toast.makeText(this, "Log in first!", Toast.LENGTH_SHORT).show();
@@ -195,7 +194,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         } else if (id == R.id.menuSettings) {
             // TODO settings
             return true;
-        } else if (id == R.id.menuSignOut) {
+        } else if (id == R.id.menuLogOut) {
             fbAuth.signOut();
             Intent intent = new Intent(this, AuthActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

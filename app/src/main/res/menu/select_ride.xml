@@ -11,7 +11,7 @@
             android:title="Settings"
             android:id="@+id/menuSettings" />
     <item
-            android:title="Sign Out"
+            android:title="Log Out"
             app:showAsAction="never"
-            android:id="@+id/menuSignOut" />
+            android:id="@+id/menuLogOut" />
 </menu>
