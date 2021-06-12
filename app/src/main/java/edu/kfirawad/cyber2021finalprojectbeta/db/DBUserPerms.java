@@ -31,4 +31,22 @@ public final class DBUserPerms {
     public static @NonNull DBUserPerms create() {
         return create(false, false, false, false);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (manager)
+            sb.append("Manager, ");
+        if (driver)
+            sb.append("Driver, ");
+        if (aide)
+            sb.append("Aide, ");
+        if (parent)
+            sb.append("Parent, ");
+        if (sb.length() > 2) {
+            sb.setLength(sb.length() - 2);
+            return sb.toString();
+        }
+        return "(none)";
+    }
 }
