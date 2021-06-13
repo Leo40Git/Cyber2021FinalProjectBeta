@@ -1,6 +1,7 @@
 package edu.kfirawad.cyber2021finalprojectbeta;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
@@ -13,6 +14,12 @@ public class DashboardActivity extends UserPermActivity {
 
     public DashboardActivity() {
         super("C2021FPB:Dashboard");
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_dashboard);
         btnManager = findViewById(R.id.btnManager);
         btnDriver = findViewById(R.id.btnDriver);

@@ -57,9 +57,12 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
         }
     }
 
+    @FunctionalInterface
+    public interface MyUserUidSupplier {
+        @Nullable String getMyUserUid();
+    }
+
     static final class Adapter extends BaseAdapter {
-
-
         static final class Entry {
             public final @NonNull String uid, name;
             public final @NonNull DBUserPerms perms;
@@ -72,10 +75,10 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
         }
 
         private final @NonNull Callback callback;
-        private final @Nullable String myUserUid;
-        public Adapter(@NonNull Callback callback, @Nullable String myUserUid) {
+        private final @NonNull MyUserUidSupplier myUserUidSupplier;
+        public Adapter(@NonNull Callback callback, @NonNull MyUserUidSupplier myUserUidSupplier) {
             this.callback = callback;
-            this.myUserUid = myUserUid;
+            this.myUserUidSupplier = myUserUidSupplier;
         }
 
         public final ArrayList<Entry> entries = new ArrayList<>();
@@ -100,7 +103,7 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
         public View getView(int position, View convertView, ViewGroup parent) {
             Entry entry = getItem(position);
             return callback.getUserItemView(parent, convertView,
-                    entry.uid, entry.name, entry.perms, myUserUid);
+                    entry.uid, entry.name, entry.perms, myUserUidSupplier.getMyUserUid());
         }
     }
 
@@ -108,31 +111,30 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
 
     private static final String ARG_RIDE_UID = "rideUid";
     private static final String ARG_SHOW_ADD_BUTTON = "showAddButton";
-    private static final String ARG_MY_USER_UID = "myUserUid";
 
     private final @NonNull Callback callback;
+    private final @NonNull MyUserUidSupplier myUserUidSupplier;
 
     private String rideUid;
     private boolean showAddButton;
-    private String myUserUid;
     private Adapter adapter;
 
     private DBRide dbRide;
     private DatabaseReference dbRefRide;
     private ValueEventListener dbRefRideL;
 
-    public UserListFragment(@NonNull Callback callback) {
+    public UserListFragment(@NonNull Callback callback, @NonNull MyUserUidSupplier myUserUidSupplier) {
         this.callback = callback;
+        this.myUserUidSupplier = myUserUidSupplier;
     }
 
     public static UserListFragment newInstance(@NonNull Callback callback,
                                                @NonNull String rideUid, boolean showAddButton,
-                                               @Nullable String myUserUid) {
-        UserListFragment fragment = new UserListFragment(callback);
+                                               @NonNull MyUserUidSupplier myUserUidSupplier) {
+        UserListFragment fragment = new UserListFragment(callback, myUserUidSupplier);
         Bundle args = new Bundle();
         args.putString(ARG_RIDE_UID, rideUid);
         args.putBoolean(ARG_SHOW_ADD_BUTTON, showAddButton);
-        args.putString(ARG_MY_USER_UID, myUserUid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -147,7 +149,6 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
         if (args != null) {
             rideUid = args.getString(rideUid);
             showAddButton = args.getBoolean(ARG_SHOW_ADD_BUTTON);
-            myUserUid = args.getString(ARG_MY_USER_UID);
         }
     }
 
@@ -174,10 +175,9 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
                     updateAdapter();
                 } else {
                     FragmentActivity activity = UserListFragment.this.requireActivity();
+                    /* shhhh...
                     Toast.makeText(activity,
-                            "Ride does not exist!", Toast.LENGTH_SHORT).show();
-                    // roughly equivalent to Activity.finish();
-                    activity.getSupportFragmentManager().popBackStackImmediate();
+                            "Ride does not exist!", Toast.LENGTH_SHORT).show();*/
                 }
             }
 
@@ -215,7 +215,7 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user_list, container, false);
         ListView lvUsers = view.findViewById(R.id.lvUsers);
-        adapter = new Adapter(callback, myUserUid);
+        adapter = new Adapter(callback, myUserUidSupplier);
         lvUsers.setAdapter(adapter);
         lvUsers.setChoiceMode(ListView.CHOICE_MODE_NONE);
         lvUsers.setOnItemClickListener(this);

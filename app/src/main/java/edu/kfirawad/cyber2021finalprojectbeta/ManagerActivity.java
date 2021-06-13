@@ -33,7 +33,11 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
             switch (position) {
             case 0: // Users
                 return UserListFragment.newInstance(ManagerActivity.this, rideUid,
-                        true, dbUser.uid);
+                        true, () -> {
+                    if (dbUser == null)
+                        return null;
+                    return dbUser.uid;
+                });
             case 1: // Children
                 return ChildListFragment.newInstance(ManagerActivity.this,
                         (uid, data) -> true,
@@ -82,6 +86,16 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
     @Override
     protected boolean hasRequiredPermission(@NonNull DBUserPerms perms) {
         return perms.manager;
+    }
+
+    @Override
+    protected void onDBUserUpdated() {
+        pageAdater.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onDBRideUpdated() {
+        pageAdater.notifyDataSetChanged();
     }
 
     @Override

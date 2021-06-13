@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            app:srcCompat="@drawable/ic_add"
+            app:srcCompat="@drawable/ic_create"
             android:contentDescription="Create Child"
             android:layout_margin="16dp" />
 

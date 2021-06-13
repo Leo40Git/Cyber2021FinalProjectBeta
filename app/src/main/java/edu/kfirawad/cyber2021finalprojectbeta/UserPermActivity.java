@@ -44,6 +44,7 @@ public abstract class UserPermActivity extends AppCompatActivity {
     protected final @NonNull String tag;
 
     protected UserPermActivity(@NonNull String tag) {
+        super();
         this.tag = "C2021FPB:" + tag;
     }
 

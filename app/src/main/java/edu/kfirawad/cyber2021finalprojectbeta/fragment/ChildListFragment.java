@@ -169,10 +169,9 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
                     updateAdapter();
                 } else {
                     FragmentActivity activity = ChildListFragment.this.requireActivity();
+                    /* shhhh...
                     Toast.makeText(activity,
-                            "Ride does not exist!", Toast.LENGTH_SHORT).show();
-                    // roughly equivalent to Activity.finish();
-                    activity.getSupportFragmentManager().popBackStackImmediate();
+                            "Ride does not exist!", Toast.LENGTH_SHORT).show(); */
                 }
             }
 
