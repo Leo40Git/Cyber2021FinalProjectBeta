@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -63,15 +63,15 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
                                  @NonNull String pickupSpot) {
         if (convertView == null)
             convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item_checkbox2, parent, false);
+                    .inflate(R.layout.list_item_button2, parent, false);
         TextView tvTitle = convertView.findViewById(R.id.tvTitle);
         TextView tvDesc = convertView.findViewById(R.id.tvDesc);
-        CheckBox checkBox = convertView.findViewById(R.id.checkBox);
-        CheckBox checkBox2 = convertView.findViewById(R.id.checkBox2);
+        Button button = convertView.findViewById(R.id.button);
+        Button button2 = convertView.findViewById(R.id.button2);
         tvTitle.setText(name);
         tvDesc.setText(parentName);
-        checkBox.setText("Will be Late");
-        checkBox2.setText("Prepare for Pickup");
+        button.setText("Will be Late");
+        button2.setText("Prepare for Pickup");
         return convertView;
     }
 }

@@ -157,6 +157,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
                     dbRefUser.setValue(dbUser);
                 }
                 rideAdapter.setRides(dbUser.rides);
+                badgeDrawable.setNumber(dbUser.invites.size());
             }
 
             @Override

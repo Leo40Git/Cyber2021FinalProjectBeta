@@ -67,6 +67,10 @@ public abstract class UserPermActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
+    protected void onDBUserUpdated() { }
+
+    protected void onDBRideUpdated() { }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -102,6 +106,7 @@ public abstract class UserPermActivity extends AppCompatActivity {
                         dbUser = null;
                         Log.e(tag, "dbRefUserL:onDataChange:getValue:exception", e);
                     }
+                    onDBUserUpdated();
                     updateUserPermissions();
                 } else {
                     Toast.makeText(UserPermActivity.this, "User does not exist!", Toast.LENGTH_SHORT).show();
@@ -130,6 +135,7 @@ public abstract class UserPermActivity extends AppCompatActivity {
                         dbRide = null;
                         Log.e(tag, "dbRefRideL:onDataChange:getValue:exception", e);
                     }
+                    onDBRideUpdated();
                     updateUserPermissions();
                 } else {
                     Toast.makeText(UserPermActivity.this, "Ride does not exist!", Toast.LENGTH_SHORT).show();

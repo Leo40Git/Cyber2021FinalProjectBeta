@@ -38,10 +38,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-    <SearchView
+    <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/svParent" />
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/etParent"
+            android:hint="User to parent child to" />
 
     <Button
             android:text="Create"

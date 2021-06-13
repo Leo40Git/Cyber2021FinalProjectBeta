@@ -5,13 +5,16 @@ import androidx.annotation.NonNull;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @IgnoreExtraProperties
 public final class DBUser extends DBRideObject {
     public @NotNull String email;
     public @NotNull Map<String, String> children;
+    public @NotNull List<Invite> invites;
 
     /**
      * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
@@ -29,6 +32,7 @@ public final class DBUser extends DBRideObject {
         user.email = email;
         user.rides = new HashMap<>();
         user.children = new HashMap<>();
+        user.invites = new ArrayList<>();
         return user;
     }
 
@@ -42,5 +46,27 @@ public final class DBUser extends DBRideObject {
         if (children == null)
             return;
         children.remove(child.uid);
+    }
+
+    @IgnoreExtraProperties
+    public static final class Invite {
+        public @NotNull String rideUid, rideName;
+        public @NotNull DBUserPerms perms;
+
+        /**
+         * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
+         *     Use {@link #create(String, String, DBUserPerms)} instead.
+         */
+        @Deprecated
+        public Invite() { }
+
+        public static @NonNull Invite create(@NonNull String rideUid, @NonNull String rideName,
+                                             @NonNull DBUserPerms perms) {
+            Invite invite = new Invite();
+            invite.rideUid = rideUid;
+            invite.rideName = rideName;
+            invite.perms = perms;
+            return invite;
+        }
     }
 }

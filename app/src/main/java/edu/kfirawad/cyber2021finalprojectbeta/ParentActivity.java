@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -48,13 +48,13 @@ public class ParentActivity extends UserPermActivity implements ChildListFragmen
                                  @NonNull String pickupSpot) {
         if (convertView == null)
             convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item_checkbox, parent, false);
+                    .inflate(R.layout.list_item_button, parent, false);
         TextView tvTitle = convertView.findViewById(R.id.tvTitle);
         TextView tvDesc = convertView.findViewById(R.id.tvDesc);
-        CheckBox checkBox = convertView.findViewById(R.id.checkBox);
+        Button button = convertView.findViewById(R.id.button);
         tvTitle.setText(name);
         tvDesc.setText(parentName);
-        checkBox.setText("Won't be Coming Today");
+        button.setText("Won't be Coming Today");
         return convertView;
     }
 }
