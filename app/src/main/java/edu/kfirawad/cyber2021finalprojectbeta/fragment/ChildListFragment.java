@@ -1,12 +1,6 @@
 package edu.kfirawad.cyber2021finalprojectbeta.fragment;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +11,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,10 +25,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.function.BiPredicate;
 
 import edu.kfirawad.cyber2021finalprojectbeta.R;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
+import edu.kfirawad.cyber2021finalprojectbeta.util.UidSupplier;
 
 public class ChildListFragment extends Fragment implements AdapterView.OnItemClickListener {
     @FunctionalInterface
@@ -100,15 +99,19 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
         }
     }
 
+    @FunctionalInterface
+    public interface Filter {
+        boolean shouldDisplayChild(@NonNull String uid, @NonNull DBRide.ChildData data);
+    }
+
     private static final String TAG = "C2021FPB:frag:ChildList";
 
-    private static final String ARG_RIDE_UID = "rideUid";
     private static final String ARG_SHOW_CREATE_BUTTON = "showCreateButton";
 
     private final @NonNull Callback callback;
-    private final @NonNull BiPredicate<String, DBRide.ChildData> filter;
+    private final @NonNull UidSupplier rideUidSupplier;
+    private final @NonNull Filter filter;
 
-    private String rideUid;
     private boolean showCreateButton;
     private Adapter adapter;
 
@@ -117,17 +120,19 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
     private ValueEventListener dbRefRideL;
 
     public ChildListFragment(@NonNull Callback callback,
-                             @NonNull BiPredicate<String, DBRide.ChildData> filter) {
+                             @NonNull UidSupplier rideUidSupplier,
+                             @NonNull Filter filter) {
         this.callback = callback;
+        this.rideUidSupplier = rideUidSupplier;
         this.filter = filter;
     }
 
     public static ChildListFragment newInstance(@NonNull Callback callback,
-                                                @NonNull BiPredicate<String, DBRide.ChildData> filter,
-                                                @NonNull String rideUid, boolean showCreateButton) {
-        ChildListFragment fragment = new ChildListFragment(callback, filter);
+                                                boolean showCreateButton,
+                                                @NonNull UidSupplier rideUidSupplier,
+                                                @NonNull Filter filter) {
+        ChildListFragment fragment = new ChildListFragment(callback, rideUidSupplier, filter);
         Bundle args = new Bundle();
-        args.putString(ARG_RIDE_UID, rideUid);
         args.putBoolean(ARG_SHOW_CREATE_BUTTON, showCreateButton);
         fragment.setArguments(args);
         return fragment;
@@ -140,10 +145,8 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
         requireActivity();
 
         Bundle args = getArguments();
-        if (args != null) {
-            rideUid = args.getString(rideUid);
+        if (args != null)
             showCreateButton = args.getBoolean(ARG_SHOW_CREATE_BUTTON);
-        }
     }
 
     @Override
@@ -152,6 +155,7 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
 
         FirebaseDatabase fbDb = FirebaseDatabase.getInstance();
 
+        final String rideUid = rideUidSupplier.getUid();
         dbRefRide = fbDb.getReference("rides/" + rideUid);
         dbRefRideL = new ValueEventListener() {
             @Override
@@ -169,9 +173,8 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
                     updateAdapter();
                 } else {
                     FragmentActivity activity = ChildListFragment.this.requireActivity();
-                    /* shhhh...
                     Toast.makeText(activity,
-                            "Ride does not exist!", Toast.LENGTH_SHORT).show(); */
+                            "Ride does not exist!", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -198,9 +201,11 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
         adapter.entries.clear();
         if (dbRide != null) {
             for (Map.Entry<String, DBRide.ChildData> child : dbRide.children.entrySet()) {
+                String uid = child.getKey();
                 DBRide.ChildData data = child.getValue();
-                adapter.entries.add(new Adapter.Entry(child.getKey(),
-                        data.name, data.parentUid, data.parentName, data.pickupSpot));
+                if (filter.shouldDisplayChild(uid, data))
+                    adapter.entries.add(new Adapter.Entry(uid,
+                            data.name, data.parentUid, data.parentName, data.pickupSpot));
             }
         }
         adapter.notifyDataSetChanged();

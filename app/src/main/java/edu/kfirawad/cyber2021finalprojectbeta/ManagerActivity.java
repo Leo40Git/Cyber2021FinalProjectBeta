@@ -32,16 +32,15 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
         public Fragment getItem(int position) {
             switch (position) {
             case 0: // Users
-                return UserListFragment.newInstance(ManagerActivity.this, rideUid,
-                        true, () -> {
+                return UserListFragment.newInstance(ManagerActivity.this, true,
+                        () -> rideUid, () -> {
                     if (dbUser == null)
                         return null;
                     return dbUser.uid;
                 });
             case 1: // Children
-                return ChildListFragment.newInstance(ManagerActivity.this,
-                        (uid, data) -> true,
-                        rideUid, true);
+                return ChildListFragment.newInstance(ManagerActivity.this, true,
+                        () -> rideUid, (uid, data) -> true);
             default:
                 throw new IndexOutOfBoundsException(position + "");
             }

@@ -10,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +29,7 @@ import java.util.Map;
 import edu.kfirawad.cyber2021finalprojectbeta.R;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
+import edu.kfirawad.cyber2021finalprojectbeta.util.UidSupplier;
 
 public class UserListFragment extends Fragment implements AdapterView.OnItemClickListener {
     @FunctionalInterface
@@ -57,11 +57,6 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
         }
     }
 
-    @FunctionalInterface
-    public interface MyUserUidSupplier {
-        @Nullable String getMyUserUid();
-    }
-
     static final class Adapter extends BaseAdapter {
         static final class Entry {
             public final @NonNull String uid, name;
@@ -75,8 +70,8 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
         }
 
         private final @NonNull Callback callback;
-        private final @NonNull MyUserUidSupplier myUserUidSupplier;
-        public Adapter(@NonNull Callback callback, @NonNull MyUserUidSupplier myUserUidSupplier) {
+        private final @NonNull UidSupplier myUserUidSupplier;
+        public Adapter(@NonNull Callback callback, @NonNull UidSupplier myUserUidSupplier) {
             this.callback = callback;
             this.myUserUidSupplier = myUserUidSupplier;
         }
@@ -103,19 +98,17 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
         public View getView(int position, View convertView, ViewGroup parent) {
             Entry entry = getItem(position);
             return callback.getUserItemView(parent, convertView,
-                    entry.uid, entry.name, entry.perms, myUserUidSupplier.getMyUserUid());
+                    entry.uid, entry.name, entry.perms, myUserUidSupplier.getUid());
         }
     }
 
     private static final String TAG = "C2021FPB:frag:UserList";
 
-    private static final String ARG_RIDE_UID = "rideUid";
     private static final String ARG_SHOW_ADD_BUTTON = "showAddButton";
 
     private final @NonNull Callback callback;
-    private final @NonNull MyUserUidSupplier myUserUidSupplier;
+    private final @NonNull UidSupplier rideUidSupplier, myUserUidSupplier;
 
-    private String rideUid;
     private boolean showAddButton;
     private Adapter adapter;
 
@@ -123,17 +116,18 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
     private DatabaseReference dbRefRide;
     private ValueEventListener dbRefRideL;
 
-    public UserListFragment(@NonNull Callback callback, @NonNull MyUserUidSupplier myUserUidSupplier) {
+    public UserListFragment(@NonNull Callback callback, @NonNull UidSupplier rideUidSupplier, @NonNull UidSupplier myUserUidSupplier) {
         this.callback = callback;
+        this.rideUidSupplier = rideUidSupplier;
         this.myUserUidSupplier = myUserUidSupplier;
     }
 
     public static UserListFragment newInstance(@NonNull Callback callback,
-                                               @NonNull String rideUid, boolean showAddButton,
-                                               @NonNull MyUserUidSupplier myUserUidSupplier) {
-        UserListFragment fragment = new UserListFragment(callback, myUserUidSupplier);
+                                               boolean showAddButton,
+                                               @NonNull UidSupplier rideUidSupplier,
+                                               @NonNull UidSupplier myUserUidSupplier) {
+        UserListFragment fragment = new UserListFragment(callback, rideUidSupplier, myUserUidSupplier);
         Bundle args = new Bundle();
-        args.putString(ARG_RIDE_UID, rideUid);
         args.putBoolean(ARG_SHOW_ADD_BUTTON, showAddButton);
         fragment.setArguments(args);
         return fragment;
@@ -146,10 +140,8 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
         requireActivity();
 
         Bundle args = getArguments();
-        if (args != null) {
-            rideUid = args.getString(rideUid);
+        if (args != null)
             showAddButton = args.getBoolean(ARG_SHOW_ADD_BUTTON);
-        }
     }
 
     @Override
@@ -158,6 +150,7 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
 
         FirebaseDatabase fbDb = FirebaseDatabase.getInstance();
 
+        final String rideUid = rideUidSupplier.getUid();
         dbRefRide = fbDb.getReference("rides/" + rideUid);
         dbRefRideL = new ValueEventListener() {
             @Override
