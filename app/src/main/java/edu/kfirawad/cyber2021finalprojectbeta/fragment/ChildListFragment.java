@@ -28,7 +28,6 @@ import java.util.Map;
 
 import edu.kfirawad.cyber2021finalprojectbeta.R;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
-import edu.kfirawad.cyber2021finalprojectbeta.util.UidSupplier;
 
 public class ChildListFragment extends Fragment implements AdapterView.OnItemClickListener {
     @FunctionalInterface
@@ -106,12 +105,13 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
 
     private static final String TAG = "C2021FPB:frag:ChildList";
 
+    private static final String ARG_RIDE_UID = "rideUid";
     private static final String ARG_SHOW_CREATE_BUTTON = "showCreateButton";
 
     private final @NonNull Callback callback;
-    private final @NonNull UidSupplier rideUidSupplier;
     private final @NonNull Filter filter;
 
+    private String rideUid;
     private boolean showCreateButton;
     private Adapter adapter;
 
@@ -120,22 +120,27 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
     private ValueEventListener dbRefRideL;
 
     public ChildListFragment(@NonNull Callback callback,
-                             @NonNull UidSupplier rideUidSupplier,
                              @NonNull Filter filter) {
         this.callback = callback;
-        this.rideUidSupplier = rideUidSupplier;
         this.filter = filter;
     }
 
     public static ChildListFragment newInstance(@NonNull Callback callback,
+                                                @NonNull String rideUid,
                                                 boolean showCreateButton,
-                                                @NonNull UidSupplier rideUidSupplier,
                                                 @NonNull Filter filter) {
-        ChildListFragment fragment = new ChildListFragment(callback, rideUidSupplier, filter);
+        ChildListFragment fragment = new ChildListFragment(callback, filter);
         Bundle args = new Bundle();
+        args.putString(ARG_RIDE_UID, rideUid);
         args.putBoolean(ARG_SHOW_CREATE_BUTTON, showCreateButton);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public static ChildListFragment newInstance(@NonNull Callback callback,
+                                                @NonNull String rideUid,
+                                                boolean showCreateButton) {
+        return newInstance(callback, rideUid, showCreateButton, (uid, data) -> true);
     }
 
     @Override
@@ -145,8 +150,10 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
         requireActivity();
 
         Bundle args = getArguments();
-        if (args != null)
+        if (args != null) {
+            rideUid = args.getString(rideUid);
             showCreateButton = args.getBoolean(ARG_SHOW_CREATE_BUTTON);
+        }
     }
 
     @Override
@@ -155,7 +162,6 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
 
         FirebaseDatabase fbDb = FirebaseDatabase.getInstance();
 
-        final String rideUid = rideUidSupplier.getUid();
         dbRefRide = fbDb.getReference("rides/" + rideUid);
         dbRefRideL = new ValueEventListener() {
             @Override

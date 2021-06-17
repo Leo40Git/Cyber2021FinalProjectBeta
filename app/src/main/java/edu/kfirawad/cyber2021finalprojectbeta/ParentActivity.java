@@ -26,7 +26,7 @@ public class ParentActivity extends UserPermActivity implements ChildListFragmen
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.layPlaceholder, ChildListFragment.newInstance(this,
-                        false, () -> rideUid, (uid, data) -> data.parentUid.equals(dbUser.uid)))
+                        rideUid, false, (uid, data) -> data.parentUid.equals(dbUser.uid)))
                 .commit();
     }
 

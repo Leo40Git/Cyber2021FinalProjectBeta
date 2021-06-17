@@ -32,15 +32,14 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
         public Fragment getItem(int position) {
             switch (position) {
             case 0: // Users
-                return UserListFragment.newInstance(ManagerActivity.this, true,
-                        () -> rideUid, () -> {
+                return UserListFragment.newInstance(ManagerActivity.this, rideUid, true,
+                        () -> {
                     if (dbUser == null)
                         return null;
                     return dbUser.uid;
                 });
             case 1: // Children
-                return ChildListFragment.newInstance(ManagerActivity.this, true,
-                        () -> rideUid, (uid, data) -> true);
+                return ChildListFragment.newInstance(ManagerActivity.this, rideUid, true);
             default:
                 throw new IndexOutOfBoundsException(position + "");
             }
@@ -85,16 +84,6 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
     @Override
     protected boolean hasRequiredPermission(@NonNull DBUserPerms perms) {
         return perms.manager;
-    }
-
-    @Override
-    protected void onDBUserUpdated() {
-        pageAdater.notifyDataSetChanged();
-    }
-
-    @Override
-    protected void onDBRideUpdated() {
-        pageAdater.notifyDataSetChanged();
     }
 
     @Override

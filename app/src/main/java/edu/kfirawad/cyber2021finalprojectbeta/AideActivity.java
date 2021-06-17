@@ -26,7 +26,7 @@ public class AideActivity extends UserPermActivity implements ChildListFragment.
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.layPlaceholder, ChildListFragment.newInstance(this,
-                        false, () -> rideUid, (uid, data) -> true))
+                        rideUid, false))
                 .commit();
     }
 

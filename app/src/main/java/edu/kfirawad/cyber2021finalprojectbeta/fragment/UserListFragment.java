@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -104,11 +105,13 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
 
     private static final String TAG = "C2021FPB:frag:UserList";
 
+    private static final String ARG_RIDE_UID = "rideUid";
     private static final String ARG_SHOW_ADD_BUTTON = "showAddButton";
 
     private final @NonNull Callback callback;
-    private final @NonNull UidSupplier rideUidSupplier, myUserUidSupplier;
+    private final @NonNull UidSupplier myUserUidSupplier;
 
+    private String rideUid;
     private boolean showAddButton;
     private Adapter adapter;
 
@@ -116,18 +119,18 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
     private DatabaseReference dbRefRide;
     private ValueEventListener dbRefRideL;
 
-    public UserListFragment(@NonNull Callback callback, @NonNull UidSupplier rideUidSupplier, @NonNull UidSupplier myUserUidSupplier) {
+    public UserListFragment(@NonNull Callback callback, @NonNull UidSupplier myUserUidSupplier) {
         this.callback = callback;
-        this.rideUidSupplier = rideUidSupplier;
         this.myUserUidSupplier = myUserUidSupplier;
     }
 
     public static UserListFragment newInstance(@NonNull Callback callback,
+                                               @NonNull String rideUid,
                                                boolean showAddButton,
-                                               @NonNull UidSupplier rideUidSupplier,
                                                @NonNull UidSupplier myUserUidSupplier) {
-        UserListFragment fragment = new UserListFragment(callback, rideUidSupplier, myUserUidSupplier);
+        UserListFragment fragment = new UserListFragment(callback, myUserUidSupplier);
         Bundle args = new Bundle();
+        args.putString(ARG_RIDE_UID, rideUid);
         args.putBoolean(ARG_SHOW_ADD_BUTTON, showAddButton);
         fragment.setArguments(args);
         return fragment;
@@ -140,8 +143,10 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
         requireActivity();
 
         Bundle args = getArguments();
-        if (args != null)
+        if (args != null) {
+            rideUid = args.getString(ARG_RIDE_UID);
             showAddButton = args.getBoolean(ARG_SHOW_ADD_BUTTON);
+        }
     }
 
     @Override
@@ -150,7 +155,6 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
 
         FirebaseDatabase fbDb = FirebaseDatabase.getInstance();
 
-        final String rideUid = rideUidSupplier.getUid();
         dbRefRide = fbDb.getReference("rides/" + rideUid);
         dbRefRideL = new ValueEventListener() {
             @Override
@@ -168,9 +172,8 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
                     updateAdapter();
                 } else {
                     FragmentActivity activity = UserListFragment.this.requireActivity();
-                    /* shhhh...
                     Toast.makeText(activity,
-                            "Ride does not exist!", Toast.LENGTH_SHORT).show();*/
+                            "Ride does not exist!", Toast.LENGTH_SHORT).show();
                 }
             }
 

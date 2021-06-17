@@ -27,7 +27,7 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.layPlaceholder, ChildListFragment.newInstance(this,
-                        false, () -> rideUid, (uid, data) -> true))
+                        rideUid, false))
                 .commit();
     }
 
