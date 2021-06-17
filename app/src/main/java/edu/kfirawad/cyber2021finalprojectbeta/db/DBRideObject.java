@@ -11,8 +11,8 @@ import java.util.Map;
  * Represents a database object with a UID (in a list) that is associated with one or more {@linkplain DBRide rides}.
  */
 public abstract class DBRideObject extends DBObject {
-    public @NotNull String name;
-    public @NotNull Map<String, String> rides;
+    public @NotNull String name = "";
+    public @NotNull Map<String, String> rides = new HashMap<>();
 
     public DBRideObject() {
         super();

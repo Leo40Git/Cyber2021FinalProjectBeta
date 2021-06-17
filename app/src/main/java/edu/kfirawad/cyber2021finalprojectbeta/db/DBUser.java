@@ -23,6 +23,9 @@ public final class DBUser extends DBRideObject {
     @Deprecated
     public DBUser() {
         super();
+        email = "";
+        children = new HashMap<>();
+        invites = new ArrayList<>();
     }
 
     public static @NonNull DBUser create(@NonNull String uid, @NonNull String name, @NonNull String email) {
@@ -30,9 +33,6 @@ public final class DBUser extends DBRideObject {
         user.uid = uid;
         user.name = name;
         user.email = email;
-        user.rides = new HashMap<>();
-        user.children = new HashMap<>();
-        user.invites = new ArrayList<>();
         return user;
     }
 
@@ -58,7 +58,9 @@ public final class DBUser extends DBRideObject {
          *     Use {@link #create(String, String, DBUserPerms)} instead.
          */
         @Deprecated
-        public Invite() { }
+        public Invite() {
+            perms = DBUserPerms.create();
+        }
 
         public static @NonNull Invite create(@NonNull String rideUid, @NonNull String rideName,
                                              @NonNull DBUserPerms perms) {

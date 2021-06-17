@@ -5,8 +5,6 @@ import androidx.annotation.NonNull;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.annotations.NotNull;
 
-import java.util.HashMap;
-
 @IgnoreExtraProperties
 public final class DBChild extends DBRideObject {
     public @NotNull String parentUid, parentName, pickupSpot;
@@ -18,6 +16,9 @@ public final class DBChild extends DBRideObject {
     @Deprecated
     public DBChild() {
         super();
+        parentUid = "";
+        parentName = "";
+        pickupSpot = "";
     }
 
     public static @NonNull DBChild create(@NonNull String uid, @NonNull String name,
@@ -25,7 +26,6 @@ public final class DBChild extends DBRideObject {
         DBChild child = new DBChild();
         child.uid = uid;
         child.name = name;
-        child.rides = new HashMap<>();
         child.parentUid = parent.uid;
         child.parentName = parent.name;
         parent.addChild(child);

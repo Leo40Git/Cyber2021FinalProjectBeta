@@ -23,6 +23,10 @@ public final class DBRide extends DBObject {
     @Deprecated
     public DBRide() {
         super();
+        name = "";
+        destination = "";
+        users = new HashMap<>();
+        children = new HashMap<>();
     }
 
     public static @NonNull DBRide create(@NonNull String uid,
@@ -34,8 +38,6 @@ public final class DBRide extends DBObject {
         ride.destination = destination;
         ride.startHour = startHour;
         ride.startMinute = startMinute;
-        ride.users = new HashMap<>();
-        ride.children = new HashMap<>();
         return ride;
     }
 
@@ -114,7 +116,10 @@ public final class DBRide extends DBObject {
          *     Use {@link #create(String, DBUserPerms)} instead.
          */
         @Deprecated
-        public UserData() { }
+        public UserData() {
+            name = "";
+            perms = DBUserPerms.create();
+        }
 
         public static @NonNull UserData create(@NonNull String name, @NonNull DBUserPerms perms) {
             UserData data = new UserData();
@@ -133,7 +138,12 @@ public final class DBRide extends DBObject {
          *     Use {@link #create(String, String, String, String)} instead.
          */
         @Deprecated
-        public ChildData() { }
+        public ChildData() {
+            name = "";
+            parentUid = "";
+            parentName = "";
+            pickupSpot = "";
+        }
 
         public static @NonNull ChildData create(@NonNull String name,
                                                 @NonNull String parentUid, @NonNull String parentName,
