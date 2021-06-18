@@ -151,7 +151,7 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
 
         Bundle args = getArguments();
         if (args != null) {
-            rideUid = args.getString(rideUid);
+            rideUid = args.getString(ARG_RIDE_UID);
             showCreateButton = args.getBoolean(ARG_SHOW_CREATE_BUTTON);
         }
     }
