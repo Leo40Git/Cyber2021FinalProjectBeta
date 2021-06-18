@@ -4,12 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
 import edu.kfirawad.cyber2021finalprojectbeta.fragment.ChildListFragment;
 
@@ -48,13 +49,22 @@ public class ParentActivity extends UserPermActivity implements ChildListFragmen
                                  @NonNull String pickupSpot) {
         if (convertView == null)
             convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item_button, parent, false);
+                    .inflate(R.layout.list_item_checkbox, parent, false);
         TextView tvTitle = convertView.findViewById(R.id.tvTitle);
         TextView tvDesc = convertView.findViewById(R.id.tvDesc);
-        Button button = convertView.findViewById(R.id.button);
+        CheckBox checkBox = convertView.findViewById(R.id.checkBox);
         tvTitle.setText(name);
         tvDesc.setText(parentName);
-        button.setText("Won't be Coming Today");
+        checkBox.setText("Coming Today");
+        checkBox.setChecked(dbRide.isChildComingToday(uid));
+        if (DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state))
+            checkBox.setEnabled(false);
+        else {
+            checkBox.setOnCheckedChangeListener((v, isChecked) -> {
+                dbRide.setChildComingToday(uid, isChecked);
+                dbRefRide.setValue(dbRide);
+            });
+        }
         return convertView;
     }
 }

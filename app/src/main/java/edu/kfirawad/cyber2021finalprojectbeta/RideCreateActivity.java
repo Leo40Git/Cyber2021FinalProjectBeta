@@ -12,9 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.material.badge.BadgeDrawable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -116,7 +114,8 @@ public class RideCreateActivity extends AppCompatActivity implements TimePickerD
     }
 
     private void updateStartTime() {
-        tvStartTime.setText(String.format(Locale.ROOT, "%02d:%02d", startHour, startMinute));
+        tvStartTime.setText(String.format(Locale.ROOT,
+                "%02d:%02d", startHour, startMinute));
     }
 
     public void onClick_btnChangeTime(View view) {

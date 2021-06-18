@@ -96,6 +96,7 @@ public class InvitesActivity extends AppCompatActivity {
                                 dbRideRef.setValue(dbRide);
                                 dbUser.invites.remove(position);
                                 dbRefUser.setValue(dbUser);
+                                Toast.makeText(InvitesActivity.this, "Invite accepted!", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(InvitesActivity.this, "Ride does not exist!", Toast.LENGTH_SHORT).show();
                             }

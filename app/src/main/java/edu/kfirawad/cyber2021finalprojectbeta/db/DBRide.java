@@ -11,7 +11,11 @@ import java.util.Map;
 
 @IgnoreExtraProperties
 public final class DBRide extends DBObject {
-    public @NotNull String name, destination;
+    public static final String STATE_INACTIVE = "inactive";
+    public static final String STATE_ACTIVE_PICKUP = "active_pickUp";
+    public static final String STATE_ACTIVE_DROPOFF = "active_dropOff";
+
+    public @NotNull String name, destination, state;
     public int startHour, startMinute;
     public @NotNull Map<String, UserData> users;
     public @NotNull Map<String, ChildData> children;
@@ -25,6 +29,7 @@ public final class DBRide extends DBObject {
         super();
         name = "";
         destination = "";
+        state = STATE_INACTIVE;
         users = new HashMap<>();
         children = new HashMap<>();
     }
@@ -96,7 +101,7 @@ public final class DBRide extends DBObject {
         if (children == null)
             children = new HashMap<>();
         children.put(child.uid,
-                ChildData.create(child.name, child.parentUid, child.parentName, child.pickupSpot));
+                ChildData.create(child.name, child.parentUid, child.parentName, child.pickupSpot, false));
         child.addRide(this);
     }
 
@@ -104,6 +109,51 @@ public final class DBRide extends DBObject {
         if (children != null)
             children.remove(child.uid);
         child.removeRide(this);
+    }
+
+    public boolean isChildComingToday(@NotNull String uid) {
+        ChildData data = children.get(uid);
+        if (data == null)
+            return false;
+        return data.comingToday;
+    }
+
+    public void setChildComingToday(@NotNull String uid, boolean comingToday) {
+        ChildData data = children.get(uid);
+        if (data == null)
+            return;
+        data.comingToday = comingToday;
+    }
+
+    public boolean isChildComingToday(@NotNull DBChild child) {
+        return isChildComingToday(child.uid);
+    }
+
+    public void setChildComingToday(@NotNull DBChild child, boolean comingToday) {
+        setChildComingToday(child.uid, comingToday);
+    }
+
+    public void startPickUp() {
+        if (!STATE_INACTIVE.equals(state))
+            return;
+        state = STATE_ACTIVE_PICKUP;
+        // TODO notify driver
+        // TODO notify parents and aides
+    }
+
+    public void finishPickUpAndStartDropOff() {
+        if (!STATE_ACTIVE_PICKUP.equals(state))
+            return;
+        state = STATE_ACTIVE_DROPOFF;
+        // TODO notify parents and aides
+    }
+
+    public void finishDropOff() {
+        if (!STATE_ACTIVE_DROPOFF.equals(state))
+            return;
+        state = STATE_INACTIVE;
+        for (ChildData data : children.values())
+            data.reset();
     }
 
     @IgnoreExtraProperties
@@ -132,10 +182,11 @@ public final class DBRide extends DBObject {
     @IgnoreExtraProperties
     public static final class ChildData {
         public @NotNull String name, parentUid, parentName, pickupSpot;
+        public boolean comingToday, pickedUp, droppedOff;
 
         /**
          * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
-         *     Use {@link #create(String, String, String, String)} instead.
+         *     Use {@link #create(String, String, String, String, boolean)} instead.
          */
         @Deprecated
         public ChildData() {
@@ -143,17 +194,26 @@ public final class DBRide extends DBObject {
             parentUid = "";
             parentName = "";
             pickupSpot = "";
+            reset();
         }
 
         public static @NonNull ChildData create(@NonNull String name,
                                                 @NonNull String parentUid, @NonNull String parentName,
-                                                @NonNull String pickupSpot) {
+                                                @NonNull String pickupSpot,
+                                                boolean comingToday) {
             ChildData data = new ChildData();
             data.name = name;
             data.parentUid = parentUid;
             data.parentName = parentName;
             data.pickupSpot = pickupSpot;
+            data.comingToday = comingToday;
             return data;
+        }
+
+        public void reset() {
+            comingToday = true;
+            pickedUp = false;
+            droppedOff = false;
         }
     }
 }
