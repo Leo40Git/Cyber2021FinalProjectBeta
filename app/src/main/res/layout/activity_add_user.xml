@@ -21,12 +21,6 @@
             android:layout_height="wrap_content" />
 
     <CheckBox
-            android:text="Manager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/cbManager" />
-
-    <CheckBox
             android:text="Driver"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
