@@ -10,10 +10,10 @@
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
+            android:inputType="textEmailAddress"
             android:ems="10"
-            android:id="@+id/etUser"
-            android:hint="User to invite" />
+            android:id="@+id/etEmail"
+            android:hint="Email of user to invite" />
 
     <TextView
             android:text="Permissions:"
@@ -42,6 +42,7 @@
             android:text="Add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btnAdd" />
+            android:id="@+id/btnAdd"
+            android:onClick="onClick_btnAdd" />
 
 </LinearLayout>
