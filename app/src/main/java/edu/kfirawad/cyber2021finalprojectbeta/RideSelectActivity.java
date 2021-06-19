@@ -97,6 +97,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         setContentView(R.layout.activity_ride_select);
 
         toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
         lvRides = findViewById(R.id.lvRides);
@@ -145,6 +146,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
                             Objects.requireNonNull(fbUser.getEmail()));
                     dbRefUser.setValue(dbUser);
                 }
+                toolbar.setTitle(fbUser.getDisplayName());
                 updateAdapter();
                 updateInvitesBadge();
             }
