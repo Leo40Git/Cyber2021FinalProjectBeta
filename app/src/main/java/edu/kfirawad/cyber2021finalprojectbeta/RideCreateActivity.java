@@ -28,7 +28,7 @@ import java.util.Objects;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
-import edu.kfirawad.cyber2021finalprojectbeta.dialog.TimePickerFragment;
+import edu.kfirawad.cyber2021finalprojectbeta.fragment.TimePickerFragment;
 
 public class RideCreateActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
     private static final String TAG = "C2021FPB:RideCreate";

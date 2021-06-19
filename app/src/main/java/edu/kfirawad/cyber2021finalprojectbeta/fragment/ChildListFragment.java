@@ -1,5 +1,6 @@
 package edu.kfirawad.cyber2021finalprojectbeta.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -147,6 +148,11 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
         return newInstance(callback, rideUid, showCreateButton, (uid, data) -> true);
     }
 
+    public void forceUpdate() {
+        if (adapter != null)
+            updateAdapter();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -228,6 +234,7 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -238,6 +245,11 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
         lvChildren.setChoiceMode(ListView.CHOICE_MODE_NONE);
         lvChildren.setOnItemClickListener(this);
         layEmpty = view.findViewById(R.id.layEmpty);
+        TextView tvEmptyDesc = view.findViewById(R.id.tvEmptyDesc);
+        if (showCreateButton)
+            tvEmptyDesc.setText("Touch the button to create a child!");
+        else
+            tvEmptyDesc.setText("Ask the manager to add your child(ren)!");
         FloatingActionButton fabCreate = view.findViewById(R.id.fabCreate);
         fabCreate.setVisibility(showCreateButton ? View.VISIBLE : View.GONE);
         fabCreate.setOnClickListener(v -> callback.onCreateChildButtonPressed());

@@ -19,6 +19,8 @@ public class ParentActivity extends UserPermActivity implements ChildListFragmen
         super("CFPB2021:Parent");
     }
 
+    private ChildListFragment childListFrag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,9 +28,19 @@ public class ParentActivity extends UserPermActivity implements ChildListFragmen
         findToolbar();
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.layPlaceholder, ChildListFragment.newInstance(this,
-                        rideUid, false, (uid, data) -> data.parentUid.equals(dbUser.uid)))
+                .replace(R.id.layPlaceholder, childListFrag = ChildListFragment.newInstance(this,
+                        rideUid, false, (uid, data) -> {
+                    if (dbUser == null)
+                        return false;
+                    return data.parentUid.equals(dbUser.uid);
+                }))
                 .commit();
+    }
+
+    @Override
+    protected void onDBUserUpdated() {
+        if (childListFrag != null)
+            childListFrag.forceUpdate();
     }
 
     @Override
@@ -49,12 +61,10 @@ public class ParentActivity extends UserPermActivity implements ChildListFragmen
                                  @NonNull String pickupSpot) {
         if (convertView == null)
             convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item_checkbox, parent, false);
+                    .inflate(R.layout.parent_list_item, parent, false);
         TextView tvTitle = convertView.findViewById(R.id.tvTitle);
-        TextView tvDesc = convertView.findViewById(R.id.tvDesc);
         CheckBox checkBox = convertView.findViewById(R.id.checkBox);
         tvTitle.setText(name);
-        tvDesc.setText(parentName);
         checkBox.setText("Coming Today");
         checkBox.setChecked(dbRide.isChildComingToday(uid));
         if (DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state))

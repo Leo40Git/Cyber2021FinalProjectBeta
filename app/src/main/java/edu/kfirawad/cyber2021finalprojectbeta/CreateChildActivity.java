@@ -106,7 +106,7 @@ public class CreateChildActivity extends AppCompatActivity implements AdapterVie
         spnParent = findViewById(R.id.spnParent);
         adapter = new Adapter();
         spnParent.setAdapter(adapter);
-        spnParent.setOnItemClickListener((AdapterView.OnItemClickListener) this);
+        spnParent.setOnItemSelectedListener(this);
     }
 
     @Override
@@ -209,6 +209,7 @@ public class CreateChildActivity extends AppCompatActivity implements AdapterVie
                         DBUser user = snapshot.getValue(DBUser.class);
                         if (user == null)
                             throw new NullPointerException("wot (" + parentUid + ")");
+                        user.uid = parentUid;
                         String childUid = Objects.requireNonNull(fbDb
                                 .getReference("rides/" + rideUid + "/children").push().getKey());
                         DBChild child = DBChild.create(childUid, name, user, pickupSpot);

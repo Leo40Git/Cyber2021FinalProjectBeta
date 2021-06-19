@@ -101,7 +101,7 @@ public final class DBRide extends DBObject {
         if (children == null)
             children = new HashMap<>();
         children.put(child.uid,
-                ChildData.create(child.name, child.parentUid, child.parentName, child.pickupSpot, false));
+                ChildData.create(child.name, child.parentUid, child.parentName, child.pickupSpot, true));
         child.addRide(this);
     }
 

@@ -1,4 +1,4 @@
-package edu.kfirawad.cyber2021finalprojectbeta.dialog;
+package edu.kfirawad.cyber2021finalprojectbeta.fragment;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
