@@ -60,10 +60,9 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         }
 
         public void setRides(@Nullable Map<String, String> rides) {
-            if (rides == null) {
-                entries.clear();
+            entries.clear();
+            if (rides == null)
                 return;
-            }
             entries.ensureCapacity(rides.size());
             for (Map.Entry<String, String> entry : rides.entrySet())
                 entries.add(new Entry(entry.getKey(), entry.getValue()));
@@ -121,6 +120,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         lvRides.setAdapter(rideAdapter);
 
         badgeDrawable = BadgeDrawable.create(this);
+        badgeDrawable.setVisible(false);
     }
 
     @Override
@@ -158,11 +158,8 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
                 }
                 rideAdapter.setRides(dbUser.rides);
                 int inviteCount = 0;
-                if (dbUser.invites != null) {
+                if (dbUser.invites != null)
                     inviteCount = dbUser.invites.size();
-                    dbUser.invites = new ArrayList<>();
-                    dbRefUser.setValue(dbUser);
-                }
                 if (inviteCount == 0)
                     badgeDrawable.setVisible(false);
                 else {
@@ -222,7 +219,6 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String rideUid = rideAdapter.getItem(position);
         Intent intent = new Intent(this, DashboardActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(DashboardActivity.RIDE_UID, rideUid);
         startActivity(intent);
     }

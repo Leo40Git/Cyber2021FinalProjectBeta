@@ -38,17 +38,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-    <EditText
+    <Spinner
+            android:id="@+id/spnParent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/etParent"
-            android:hint="User to parent child to" />
+            android:layout_height="wrap_content" />
 
     <Button
             android:text="Create"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btnCreate" />
+            android:id="@+id/btnCreate"
+            android:onClick="onClick_btnCreate" />
 </LinearLayout>

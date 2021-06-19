@@ -28,7 +28,6 @@ public final class DBChild extends DBRideObject {
         child.name = name;
         child.parentUid = parent.uid;
         child.parentName = parent.name;
-        parent.addChild(child);
         child.pickupSpot = pickupSpot;
         return child;
     }

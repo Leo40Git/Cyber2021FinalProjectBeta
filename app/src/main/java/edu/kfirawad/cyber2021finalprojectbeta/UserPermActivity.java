@@ -245,6 +245,15 @@ public abstract class UserPermActivity extends AppCompatActivity {
                 startActivity(i);
             }
             return true;
+        } else if (id == R.id.menuCredits) {
+            Intent i = new Intent(this, CreditsActivity.class);
+            startActivity(i);
+            return true;
+        } else if (id == R.id.menuExit) {
+            Intent i = new Intent(this, RideSelectActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

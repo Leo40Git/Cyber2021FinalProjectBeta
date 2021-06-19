@@ -55,7 +55,7 @@ public final class DBRide extends DBObject {
     public void addUser(@NonNull DBUser user, @NonNull DBUserPerms initialPerms) {
         if (users == null)
             users = new HashMap<>();
-        users.put(user.uid, UserData.create(user.name, initialPerms));
+        users.put(user.uid, UserData.create(user.name, user.email, initialPerms));
         user.addRide(this);
     }
 
@@ -158,22 +158,24 @@ public final class DBRide extends DBObject {
 
     @IgnoreExtraProperties
     public static final class UserData {
-        public @NotNull String name;
+        public @NotNull String name, email;
         public @NotNull DBUserPerms perms;
 
         /**
          * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
-         *     Use {@link #create(String, DBUserPerms)} instead.
+         *     Use {@link #create(String, String, DBUserPerms)} instead.
          */
         @Deprecated
         public UserData() {
             name = "";
+            email = "";
             perms = DBUserPerms.create();
         }
 
-        public static @NonNull UserData create(@NonNull String name, @NonNull DBUserPerms perms) {
+        public static @NonNull UserData create(@NonNull String name, @NonNull String email, @NonNull DBUserPerms perms) {
             UserData data = new UserData();
             data.name = name;
+            data.email = email;
             data.perms = perms;
             return data;
         }

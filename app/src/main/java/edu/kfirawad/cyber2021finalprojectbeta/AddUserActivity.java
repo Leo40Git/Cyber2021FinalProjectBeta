@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
@@ -110,8 +111,10 @@ public class AddUserActivity extends AppCompatActivity {
                 emailsToUsers.clear();
                 for (DataSnapshot child : snapshot.getChildren()) {
                     DBUser user = child.getValue(DBUser.class);
-                    if (user != null)
+                    if (user != null) {
+                        user.uid = Objects.requireNonNull(child.getKey());
                         emailsToUsers.put(user.email, user);
+                    }
                 }
             }
 

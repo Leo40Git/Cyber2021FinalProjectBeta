@@ -61,15 +61,4 @@ public class DashboardActivity extends UserPermActivity {
         i.putExtra(RIDE_UID, rideUid);
         startActivity(i);
     }
-
-    public void onClick_btnExit(View view) {
-        Intent i = new Intent(this, RideSelectActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(i);
-        finish();
-    }
-
-    public void onClick_btnCredits(View view) {
-        // TODO credits
-    }
 }

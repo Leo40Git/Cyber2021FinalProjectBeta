@@ -12,4 +12,10 @@
     <item
         android:id="@+id/menuParent"
         android:title="Parent" />
+    <item
+            android:title="Credits"
+            android:id="@+id/menuCredits" />
+    <item
+            android:title="Exit"
+            android:id="@+id/menuExit" />
 </menu>
