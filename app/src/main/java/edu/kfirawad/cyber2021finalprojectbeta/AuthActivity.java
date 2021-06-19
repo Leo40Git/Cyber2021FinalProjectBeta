@@ -2,10 +2,12 @@ package edu.kfirawad.cyber2021finalprojectbeta;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,12 +21,13 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 public class AuthActivity extends AppCompatActivity {
     private static final String TAG = "C2021FPB:Main";
 
-    private boolean isRegistering;
+    private boolean isRegistering, passwordShown;
     private FirebaseAuth fbAuth;
 
     private TextView tvTitle;
     private LinearLayout layName;
     private EditText etName, etEmail, etPassword;
+    private ImageButton btnShowPassword;
     private Button btnAction;
     private TextView tvSwitchBtnDesc;
     private Button btnSwitch;
@@ -41,11 +44,13 @@ public class AuthActivity extends AppCompatActivity {
         etName = findViewById(R.id.etName);
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
+        btnShowPassword = findViewById(R.id.btnShowPassword);
         btnAction = findViewById(R.id.btnAction);
         tvSwitchBtnDesc = findViewById(R.id.tvSwitchBtnDesc);
         btnSwitch = findViewById(R.id.btnSwitch);
 
         setMode(false);
+        setPasswordShown(false);
     }
 
     @Override
@@ -153,5 +158,20 @@ public class AuthActivity extends AppCompatActivity {
 
     public void onClick_btnSwitch(View view) {
         setMode(!isRegistering);
+    }
+
+    public void onClick_btnShowPassword(View view) {
+        setPasswordShown(!passwordShown);
+    }
+
+    private void setPasswordShown(boolean passwordShown) {
+        this.passwordShown = passwordShown;
+        if (passwordShown) {
+            btnShowPassword.setImageResource(R.drawable.ic_shown);
+            etPassword.setTransformationMethod(null);
+        } else {
+            btnShowPassword.setImageResource(R.drawable.ic_hidden);
+            etPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        }
     }
 }
