@@ -39,7 +39,7 @@
             android:onClick="onClick_btnParent" />
 
     <Button
-            android:text="Aide"
+            android:text="Teacher"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/btnTeacher"
