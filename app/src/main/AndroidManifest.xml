@@ -22,7 +22,7 @@
         <activity android:name=".ManagerActivity" />
         <activity android:name=".ParentActivity" />
         <activity android:name=".DriverActivity" />
-        <activity android:name=".AideActivity" />
+        <activity android:name=".TeacherActivity" />
         <activity android:name=".RideCreateActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

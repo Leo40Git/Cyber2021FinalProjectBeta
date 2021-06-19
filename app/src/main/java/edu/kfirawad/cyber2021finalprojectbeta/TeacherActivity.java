@@ -13,15 +13,15 @@ import androidx.annotation.Nullable;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
 import edu.kfirawad.cyber2021finalprojectbeta.fragment.ChildListFragment;
 
-public class AideActivity extends UserPermActivity implements ChildListFragment.Callback {
-    public AideActivity() {
+public class TeacherActivity extends UserPermActivity implements ChildListFragment.Callback {
+    public TeacherActivity() {
         super("CFPB2021:Aide");
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_aide);
+        setContentView(R.layout.activity_teacher);
         findToolbar();
 
         getSupportFragmentManager().beginTransaction()
@@ -32,7 +32,7 @@ public class AideActivity extends UserPermActivity implements ChildListFragment.
 
     @Override
     protected boolean hasRequiredPermission(@NonNull DBUserPerms perms) {
-        return perms.aide;
+        return perms.teacher;
     }
 
     @Override

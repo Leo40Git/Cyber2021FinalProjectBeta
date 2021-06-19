@@ -24,7 +24,7 @@ public class DashboardActivity extends UserPermActivity {
         btnManager = findViewById(R.id.btnManager);
         btnDriver = findViewById(R.id.btnDriver);
         btnParent = findViewById(R.id.btnParent);
-        btnAide = findViewById(R.id.btnAide);
+        btnAide = findViewById(R.id.btnTeacher);
 
         findToolbar();
     }
@@ -34,7 +34,7 @@ public class DashboardActivity extends UserPermActivity {
         btnManager.setEnabled(perms.manager);
         btnDriver.setEnabled(perms.driver);
         btnParent.setEnabled(perms.parent);
-        btnAide.setEnabled(perms.aide);
+        btnAide.setEnabled(perms.teacher);
         return true;
     }
 
@@ -56,8 +56,8 @@ public class DashboardActivity extends UserPermActivity {
         startActivity(i);
     }
 
-    public void onClick_btnAide(View view) {
-        Intent i = new Intent(this, AideActivity.class);
+    public void onClick_btnTeacher(View view) {
+        Intent i = new Intent(this, TeacherActivity.class);
         i.putExtra(RIDE_UID, rideUid);
         startActivity(i);
     }

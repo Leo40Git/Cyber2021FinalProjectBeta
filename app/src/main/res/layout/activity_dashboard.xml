@@ -42,7 +42,7 @@
             android:text="Aide"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btnAide"
+            android:id="@+id/btnTeacher"
             android:enabled="false"
-            android:onClick="onClick_btnAide" />
+            android:onClick="onClick_btnTeacher" />
 </LinearLayout>

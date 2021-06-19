@@ -8,7 +8,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 public final class DBUserPerms {
     public boolean manager;
     public boolean driver;
-    public boolean aide;
+    public boolean teacher;
     public boolean parent;
 
     /**
@@ -19,11 +19,11 @@ public final class DBUserPerms {
     public DBUserPerms() { }
 
     public static @NonNull
-    DBUserPerms create(boolean manager, boolean driver, boolean aide, boolean parent) {
+    DBUserPerms create(boolean manager, boolean driver, boolean teacher, boolean parent) {
         DBUserPerms perms = new DBUserPerms();
         perms.manager = manager;
         perms.driver = driver;
-        perms.aide = aide;
+        perms.teacher = teacher;
         perms.parent = parent;
         return perms;
     }
@@ -39,8 +39,8 @@ public final class DBUserPerms {
             sb.append("Manager, ");
         if (driver)
             sb.append("Driver, ");
-        if (aide)
-            sb.append("Aide, ");
+        if (teacher)
+            sb.append("Teacher, ");
         if (parent)
             sb.append("Parent, ");
         if (sb.length() > 2) {
