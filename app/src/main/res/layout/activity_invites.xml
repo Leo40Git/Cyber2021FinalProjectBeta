@@ -10,5 +10,35 @@
     <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/lvInvites" />
+            android:id="@+id/lvInvites"
+            android:visibility="gone" />
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/layEmpty">
+
+        <Space
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+        <TextView
+                android:text="No invites!"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textAlignment="center" />
+
+        <Space
+                android:layout_width="match_parent"
+                android:layout_height="12dp" />
+
+        <TextView
+                android:text="Ask someone to invite you to their ride!"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center" />
+    </LinearLayout>
 </LinearLayout>

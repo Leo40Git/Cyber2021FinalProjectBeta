@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -113,7 +114,10 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
 
     private String rideUid;
     private boolean showCreateButton;
+
+    private ListView lvChildren;
     private Adapter adapter;
+    private LinearLayout layEmpty;
 
     private DBRide dbRide;
     private DatabaseReference dbRefRide;
@@ -215,17 +219,25 @@ public class ChildListFragment extends Fragment implements AdapterView.OnItemCli
             }
         }
         adapter.notifyDataSetChanged();
+        if (adapter.entries.isEmpty()) {
+            lvChildren.setVisibility(View.GONE);
+            layEmpty.setVisibility(View.VISIBLE);
+        } else {
+            lvChildren.setVisibility(View.VISIBLE);
+            layEmpty.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_child_list, container, false);
-        ListView lvChildren = view.findViewById(R.id.lvChildren);
+        lvChildren = view.findViewById(R.id.lvChildren);
         adapter = new Adapter(callback);
         lvChildren.setAdapter(adapter);
         lvChildren.setChoiceMode(ListView.CHOICE_MODE_NONE);
         lvChildren.setOnItemClickListener(this);
+        layEmpty = view.findViewById(R.id.layEmpty);
         FloatingActionButton fabCreate = view.findViewById(R.id.fabCreate);
         fabCreate.setVisibility(showCreateButton ? View.VISIBLE : View.GONE);
         fabCreate.setOnClickListener(v -> callback.onCreateChildButtonPressed());

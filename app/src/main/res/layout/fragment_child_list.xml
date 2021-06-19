@@ -10,7 +10,39 @@
     <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/lvChildren" />
+            android:id="@+id/lvChildren"
+            tools:visibility="gone">
+
+    </ListView>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/layEmpty">
+
+        <Space
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+        <TextView
+                android:text="No children!"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textAlignment="center" />
+
+        <Space
+                android:layout_width="match_parent"
+                android:layout_height="12dp" />
+
+        <TextView
+                android:text="Create a child using the button!"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center" />
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabCreate"

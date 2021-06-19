@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,7 +33,7 @@ import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
 public class InvitesActivity extends AppCompatActivity {
     private static final String TAG = "C2021FPB:Invites";
 
-    final class Adapter extends BaseAdapter {
+    private final class Adapter extends BaseAdapter {
         @Override
         public int getCount() {
             if (dbUser == null)
@@ -98,7 +99,9 @@ public class InvitesActivity extends AppCompatActivity {
                                 dbRefUser.setValue(dbUser);
                                 Toast.makeText(InvitesActivity.this, "Invite accepted!", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(InvitesActivity.this, "Ride does not exist!", Toast.LENGTH_SHORT).show();
+                                dbUser.invites.remove(position);
+                                dbRefUser.setValue(dbUser);
+                                Toast.makeText(InvitesActivity.this, "Ride does not exist! Invite removed.", Toast.LENGTH_SHORT).show();
                             }
                         }
 
@@ -121,6 +124,7 @@ public class InvitesActivity extends AppCompatActivity {
 
     private ListView lvInvites;
     private Adapter adapter;
+    private LinearLayout layEmpty;
 
     private FirebaseDatabase fbDb;
     private FirebaseUser fbUser;
@@ -137,6 +141,7 @@ public class InvitesActivity extends AppCompatActivity {
         adapter = new Adapter();
         lvInvites.setAdapter(adapter);
         lvInvites.setChoiceMode(ListView.CHOICE_MODE_NONE);
+        layEmpty = findViewById(R.id.layEmpty);
     }
 
     @Override
@@ -172,7 +177,14 @@ public class InvitesActivity extends AppCompatActivity {
                             Objects.requireNonNull(fbUser.getEmail()));
                     dbRefUser.setValue(dbUser);
                 }
-                adapter.notifyDataSetInvalidated();
+                adapter.notifyDataSetChanged();
+                if (dbUser.invites.isEmpty()) {
+                    lvInvites.setVisibility(View.GONE);
+                    layEmpty.setVisibility(View.VISIBLE);
+                } else {
+                    lvInvites.setVisibility(View.VISIBLE);
+                    layEmpty.setVisibility(View.GONE);
+                }
             }
 
             @Override

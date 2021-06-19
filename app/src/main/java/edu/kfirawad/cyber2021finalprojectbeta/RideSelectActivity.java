@@ -1,6 +1,5 @@
 package edu.kfirawad.cyber2021finalprojectbeta;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,12 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.experimental.UseExperimental;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -41,7 +40,7 @@ import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
 public class RideSelectActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     private static final String TAG = "C2021FPB:RideSelect";
 
-    private static final class RideAdapter extends BaseAdapter {
+    private static final class Adapter extends BaseAdapter {
         private static final class Entry {
             public final String id, name;
 
@@ -51,23 +50,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
             }
         }
 
-        private final LayoutInflater inflater;
-        private final ArrayList<Entry> entries;
-
-        public RideAdapter(Context ctx) {
-            inflater = LayoutInflater.from(ctx);
-            entries = new ArrayList<>();
-        }
-
-        public void setRides(@Nullable Map<String, String> rides) {
-            entries.clear();
-            if (rides == null)
-                return;
-            entries.ensureCapacity(rides.size());
-            for (Map.Entry<String, String> entry : rides.entrySet())
-                entries.add(new Entry(entry.getKey(), entry.getValue()));
-            notifyDataSetChanged();
-        }
+        public final ArrayList<Entry> entries = new ArrayList<>();
 
         @Override
         public int getCount() {
@@ -87,7 +70,8 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null)
-                convertView = inflater.inflate(R.layout.ride_select_list_item, parent, false);
+                convertView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.ride_select_list_item, parent, false);
             TextView tvTitle = convertView.findViewById(R.id.tvTitle);
             tvTitle.setText(entries.get(position).name);
             return convertView;
@@ -100,7 +84,9 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
     private ValueEventListener dbRefUserL;
 
     private Toolbar toolbar;
-    private RideAdapter rideAdapter;
+    private ListView lvRides;
+    private Adapter adapter;
+    private LinearLayout layEmpty;
     private BadgeDrawable badgeDrawable;
 
     private DBUser dbUser;
@@ -113,11 +99,12 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ListView lvRides = findViewById(R.id.lvRides);
+        lvRides = findViewById(R.id.lvRides);
         lvRides.setOnItemClickListener(this);
         lvRides.setChoiceMode(ListView.CHOICE_MODE_NONE);
-        rideAdapter = new RideAdapter(getApplicationContext());
-        lvRides.setAdapter(rideAdapter);
+        adapter = new Adapter();
+        lvRides.setAdapter(adapter);
+        layEmpty = findViewById(R.id.layEmpty);
 
         badgeDrawable = BadgeDrawable.create(this);
         badgeDrawable.setVisible(false);
@@ -156,16 +143,8 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
                             Objects.requireNonNull(fbUser.getEmail()));
                     dbRefUser.setValue(dbUser);
                 }
-                rideAdapter.setRides(dbUser.rides);
-                int inviteCount = 0;
-                if (dbUser.invites != null)
-                    inviteCount = dbUser.invites.size();
-                if (inviteCount == 0)
-                    badgeDrawable.setVisible(false);
-                else {
-                    badgeDrawable.setVisible(true);
-                    badgeDrawable.setNumber(inviteCount);
-                }
+                updateAdapter();
+                updateInvitesBadge();
             }
 
             @Override
@@ -173,6 +152,35 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
                 Log.e(TAG, "dbRefUserL:onCancelled", databaseError.toException());
             }
         });
+    }
+
+    private void updateAdapter() {
+        adapter.entries.clear();
+        if (dbUser.rides != null) {
+            adapter.entries.ensureCapacity(dbUser.rides.size());
+            for (Map.Entry<String, String> entry : dbUser.rides.entrySet())
+                adapter.entries.add(new Adapter.Entry(entry.getKey(), entry.getValue()));
+        }
+        adapter.notifyDataSetChanged();
+        if (adapter.entries.isEmpty()) {
+            lvRides.setVisibility(View.GONE);
+            layEmpty.setVisibility(View.VISIBLE);
+        } else {
+            lvRides.setVisibility(View.VISIBLE);
+            layEmpty.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateInvitesBadge() {
+        int inviteCount = 0;
+        if (dbUser.invites != null)
+            inviteCount = dbUser.invites.size();
+        if (inviteCount == 0)
+            badgeDrawable.setVisible(false);
+        else {
+            badgeDrawable.setVisible(true);
+            badgeDrawable.setNumber(inviteCount);
+        }
     }
 
     @Override
@@ -217,7 +225,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String rideUid = rideAdapter.getItem(position);
+        String rideUid = adapter.getItem(position);
         Intent intent = new Intent(this, DashboardActivity.class);
         intent.putExtra(DashboardActivity.RIDE_UID, rideUid);
         startActivity(intent);
