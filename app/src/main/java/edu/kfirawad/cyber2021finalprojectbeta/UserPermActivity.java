@@ -33,6 +33,7 @@ public abstract class UserPermActivity extends AppCompatActivity {
     protected String rideUid;
     protected Toolbar toolbar;
 
+    protected FirebaseDatabase fbDb;
     protected DBUser dbUser;
     protected DatabaseReference dbRefUser;
     protected ValueEventListener dbRefUserL;
@@ -87,8 +88,8 @@ public abstract class UserPermActivity extends AppCompatActivity {
             finish();
             return;
         }
-        FirebaseDatabase fbDb = FirebaseDatabase.getInstance();
 
+        fbDb = FirebaseDatabase.getInstance();
         final String userId = fbUser.getUid();
         dbRefUser = fbDb.getReference("users/" + userId);
         dbRefUserL = new ValueEventListener() {

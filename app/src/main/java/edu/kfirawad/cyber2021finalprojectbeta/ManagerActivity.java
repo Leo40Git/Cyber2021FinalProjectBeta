@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,7 +15,15 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.Objects;
+
+import edu.kfirawad.cyber2021finalprojectbeta.db.DBChild;
+import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
 import edu.kfirawad.cyber2021finalprojectbeta.fragment.ChildListFragment;
 import edu.kfirawad.cyber2021finalprojectbeta.fragment.UserListFragment;
@@ -97,7 +107,46 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
                         "<b>Name:</b> " + name + "<br>"
                                 + "<b>E-mail:</b> " + email + "<br>"
                 ))
-                // TODO edit perms/remove user buttons
+                .setNegativeButton("Remove", (dialog, which) -> {
+                    new AlertDialog.Builder(ManagerActivity.this)
+                            .setTitle("Confirm Removal")
+                            .setMessage(Html.fromHtml(
+                                    "Are you <b>sure</b> you want to remove " + name + "?"
+                            ))
+                            .setNeutralButton(android.R.string.no, (dialog1, which1) -> dialog1.dismiss())
+                            .setNegativeButton(android.R.string.yes, (dialog1, which1) -> {
+                                dialog1.dismiss();
+                                dialog.dismiss();
+                                DatabaseReference dbRefUser = fbDb.getReference("users/" + uid);
+                                dbRefUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (snapshot.exists()) {
+                                            try {
+                                                DBUser user = snapshot.getValue(DBUser.class);
+                                                if (user == null)
+                                                    throw new NullPointerException("wot (" + uid + ")");
+                                                user.uid = uid;
+                                                dbRide.removeUser(user);
+                                                dbRefRide.setValue(dbRide);
+                                                dbRefUser.setValue(user);
+                                                Toast.makeText(ManagerActivity.this, "Removed user" + name, Toast.LENGTH_SHORT).show();
+                                            } catch (Exception e) {
+                                                Log.e(tag, "onUserSelected:singleUserL:onDataChange:getValue", e);
+                                            }
+                                        } else
+                                            Toast.makeText(ManagerActivity.this, "User does not exist?!", Toast.LENGTH_LONG).show();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Log.e(tag, "onUserSelected:singleUserL:onCancelled", error.toException());
+                                        Toast.makeText(ManagerActivity.this, "Failed to remove user!", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            })
+                            .show();
+                })
                 .show();
     }
 
@@ -119,7 +168,21 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
                                 + "<b>Parent:</b> " + parentName + "<br>"
                                 + "<b>Pickup Spot:</b> " + pickupSpot
                 ))
-                // TODO edit/remove child buttons
+                .setNegativeButton("Delete", (dialog, which) -> {
+                    new AlertDialog.Builder(ManagerActivity.this)
+                            .setTitle("Confirm Deletion")
+                            .setMessage(Html.fromHtml(
+                                    "Are you <b>sure</b> you want to delete " + name + "?"
+                            ))
+                            .setNeutralButton(android.R.string.no, (dialog1, which1) -> dialog1.dismiss())
+                            .setNegativeButton(android.R.string.yes, (dialog1, which1) -> {
+                                dialog1.dismiss();
+                                dialog.dismiss();
+                                dbRide.children.remove(uid);
+                                dbRefRide.setValue(dbRide);
+                            })
+                            .show();
+                })
                 .show();
     }
 

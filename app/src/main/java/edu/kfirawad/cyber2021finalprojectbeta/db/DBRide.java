@@ -102,13 +102,11 @@ public final class DBRide extends DBObject {
             children = new HashMap<>();
         children.put(child.uid,
                 ChildData.create(child.name, child.parentUid, child.parentName, child.pickupSpot, true));
-        child.addRide(this);
     }
 
     public void removeChild(@NonNull DBChild child) {
         if (children != null)
             children.remove(child.uid);
-        child.removeRide(this);
     }
 
     public boolean isChildComingToday(@NotNull String uid) {

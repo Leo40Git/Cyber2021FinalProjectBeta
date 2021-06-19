@@ -6,8 +6,8 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.annotations.NotNull;
 
 @IgnoreExtraProperties
-public final class DBChild extends DBRideObject {
-    public @NotNull String parentUid, parentName, pickupSpot;
+public final class DBChild extends DBObject {
+    public @NotNull String name, parentUid, parentName, pickupSpot;
 
     /**
      * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
@@ -16,6 +16,7 @@ public final class DBChild extends DBRideObject {
     @Deprecated
     public DBChild() {
         super();
+        name = "";
         parentUid = "";
         parentName = "";
         pickupSpot = "";
