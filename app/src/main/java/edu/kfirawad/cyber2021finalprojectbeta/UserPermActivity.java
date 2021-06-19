@@ -65,6 +65,7 @@ public abstract class UserPermActivity extends AppCompatActivity {
      */
     protected void findToolbar() {
         toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
     }
 
@@ -103,6 +104,7 @@ public abstract class UserPermActivity extends AppCompatActivity {
                             dbRefUser.setValue(dbUser);
                         }
                         dbUser.uid = userId;
+                        toolbar.setTitle(dbUser.name);
                     } catch (Exception e) {
                         dbUser = null;
                         Log.e(tag, "dbRefUserL:onDataChange:getValue:exception", e);

@@ -33,10 +33,10 @@
             android:id="@+id/cbParent" />
 
     <CheckBox
-            android:text="Aide"
+            android:text="Teacher"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/cbAide" />
+            android:id="@+id/cbTeacher" />
 
     <Button
             android:text="Add"

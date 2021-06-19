@@ -32,7 +32,7 @@ public class AddUserActivity extends AppCompatActivity {
     private final HashMap<String, DBUser> emailsToUsers = new HashMap<>();
 
     private EditText etEmail;
-    private CheckBox cbDriver, cbParent, cbAide;
+    private CheckBox cbDriver, cbParent, cbTeacher;
 
     private String rideUid;
 
@@ -58,7 +58,7 @@ public class AddUserActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.etEmail);
         cbDriver = findViewById(R.id.cbDriver);
         cbParent = findViewById(R.id.cbParent);
-        cbAide = findViewById(R.id.cbAide);
+        cbTeacher = findViewById(R.id.cbTeacher);
     }
 
     @Override
@@ -149,6 +149,11 @@ public class AddUserActivity extends AppCompatActivity {
             return;
         }
 
+        if (!cbDriver.isChecked() && !cbTeacher.isChecked() && !cbParent.isChecked()) {
+            Toast.makeText(this, "Select at least one permission!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         DBUser user = emailsToUsers.get(email);
         if (user == null) {
             Toast.makeText(this, "No user with that e-mail!", Toast.LENGTH_LONG).show();
@@ -158,7 +163,7 @@ public class AddUserActivity extends AppCompatActivity {
         etEmail.setText("");
         user.invites.add(DBUser.Invite.create(dbRide.uid, dbRide.name,
                 DBUserPerms.create(false,
-                        cbDriver.isChecked(), cbAide.isChecked(), cbParent.isChecked())));
+                        cbDriver.isChecked(), cbTeacher.isChecked(), cbParent.isChecked())));
         DatabaseReference dbRefUser = fbDb.getReference("users/" + user.uid);
         dbRefUser.setValue(user);
         Toast.makeText(this, "Invited " + user.name + " to your ride!", Toast.LENGTH_SHORT).show();
