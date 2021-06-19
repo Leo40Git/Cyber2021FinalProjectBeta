@@ -98,25 +98,34 @@ public class AuthActivity extends AppCompatActivity {
             Toast.makeText(this, "Password cannot be empty!", Toast.LENGTH_LONG).show();
             return;
         }
+        btnAction.setEnabled(false);
+        btnSwitch.setEnabled(false);
         if (isRegistering)
             createAccount(name, email, password);
         else
             signIn(email, password);
     }
 
+    private void enableButtons() {
+        btnAction.setEnabled(true);
+        btnSwitch.setEnabled(true);
+    }
+
     private void createAccount(String name, String email, String password) {
+        btnAction.setEnabled(false);
         fbAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null && task.getResult().getUser() != null) {
                         Log.d(TAG, "createAccount:success");
                         task.getResult().getUser().updateProfile(new UserProfileChangeRequest.Builder()
                                 .setDisplayName(name)
-                                .build());
-                        toRideSelect();
+                                .build())
+                                .addOnCompleteListener(unused -> toRideSelect());
                     } else {
                         Log.w(TAG, "createAccount:failure", task.getException());
                         // TODO better error display
                         Toast.makeText(this, "Failed to create account!", Toast.LENGTH_SHORT).show();
+                        enableButtons();
                     }
                 });
     }
@@ -131,6 +140,7 @@ public class AuthActivity extends AppCompatActivity {
                         Log.w(TAG, "signIn:failure", task.getException());
                         // TODO better error display
                         Toast.makeText(this, "Failed to sign in!", Toast.LENGTH_SHORT).show();
+                        enableButtons();
                     }
                 });
     }

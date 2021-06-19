@@ -35,14 +35,15 @@ import edu.kfirawad.cyber2021finalprojectbeta.util.UidSupplier;
 public class UserListFragment extends Fragment implements AdapterView.OnItemClickListener {
     @FunctionalInterface
     public interface Callback {
-        void onUserSelected(@NonNull String uid, @NonNull String name, @NonNull DBUserPerms perms);
+        void onUserSelected(@NonNull String uid, @NonNull String name, @NonNull String email,
+                            @NonNull DBUserPerms perms);
 
         default void onAddUserButtonClicked() { }
 
         @SuppressLint("SetTextI18n")
         default @NonNull View getUserItemView(@NonNull ViewGroup parent, @Nullable View convertView,
                                               @NonNull String uid, @NonNull String name,
-                                              @NonNull DBUserPerms perms,
+                                              @NonNull String email, @NonNull DBUserPerms perms,
                                               @Nullable String myUserUid) {
             if (convertView == null)
                 convertView = LayoutInflater.from(parent.getContext())
@@ -60,12 +61,13 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
 
     static final class Adapter extends BaseAdapter {
         static final class Entry {
-            public final @NonNull String uid, name;
+            public final @NonNull String uid, name, email;
             public final @NonNull DBUserPerms perms;
 
-            public Entry(@NonNull String uid, @NonNull String name, @NonNull DBUserPerms perms) {
+            public Entry(@NonNull String uid, @NonNull String name, @NonNull String email, @NonNull DBUserPerms perms) {
                 this.uid = uid;
                 this.name = name;
+                this.email = email;
                 this.perms = perms;
             }
         }
@@ -99,7 +101,7 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
         public View getView(int position, View convertView, ViewGroup parent) {
             Entry entry = getItem(position);
             return callback.getUserItemView(parent, convertView,
-                    entry.uid, entry.name, entry.perms, myUserUidSupplier.getUid());
+                    entry.uid, entry.name, entry.email, entry.perms, myUserUidSupplier.getUid());
         }
     }
 
@@ -199,9 +201,11 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
     private void updateAdapter() {
         adapter.entries.clear();
         if (dbRide != null) {
-            for (Map.Entry<String, DBRide.UserData> user : dbRide.users.entrySet())
+            for (Map.Entry<String, DBRide.UserData> user : dbRide.users.entrySet()) {
+                DBRide.UserData data = user.getValue();
                 adapter.entries.add(new Adapter.Entry(user.getKey(),
-                        user.getValue().name, user.getValue().perms));
+                        data.name, data.email, data.perms));
+            }
         }
         adapter.notifyDataSetChanged();
     }
@@ -224,6 +228,6 @@ public class UserListFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Adapter.Entry entry = adapter.getItem(position);
-        callback.onUserSelected(entry.uid, entry.name, entry.perms);
+        callback.onUserSelected(entry.uid, entry.name, entry.email, entry.perms);
     }
 }

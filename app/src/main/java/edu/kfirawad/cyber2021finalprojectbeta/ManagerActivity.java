@@ -1,7 +1,9 @@
 package edu.kfirawad.cyber2021finalprojectbeta;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -88,8 +90,15 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
 
     @Override
     public void onUserSelected(@NonNull String uid, @NonNull String name,
-                               @NonNull DBUserPerms perms) {
-        // TODO user details dialog
+                               @NonNull String email, @NonNull DBUserPerms perms) {
+        new AlertDialog.Builder(this)
+                .setTitle("User Details")
+                .setMessage(Html.fromHtml(
+                        "<b>Name:</b> " + name + "<br>"
+                                + "<b>E-mail:</b> " + email + "<br>"
+                ))
+                // TODO edit perms/remove user buttons
+                .show();
     }
 
     @Override
@@ -103,7 +112,15 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
     public void onChildSelected(@NonNull String uid, @NonNull String name,
                                 @NonNull String parentUid, @NonNull String parentName,
                                 @NonNull String pickupSpot) {
-        // TODO child details dialog
+        new AlertDialog.Builder(this)
+                .setTitle("Child Details")
+                .setMessage(Html.fromHtml(
+                        "<b>Name:</b> " + name + "<br>"
+                                + "<b>Parent:</b> " + parentName + "<br>"
+                                + "<b>Pickup Spot:</b> " + pickupSpot
+                ))
+                // TODO edit/remove child buttons
+                .show();
     }
 
     @Override

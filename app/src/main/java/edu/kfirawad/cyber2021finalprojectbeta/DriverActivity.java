@@ -63,7 +63,7 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
                                  @NonNull String pickupSpot) {
         if (convertView == null)
             convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item_button2, parent, false);
+                    .inflate(R.layout.driver_list_item, parent, false);
         TextView tvTitle = convertView.findViewById(R.id.tvTitle);
         TextView tvDesc = convertView.findViewById(R.id.tvDesc);
         Button button = convertView.findViewById(R.id.button);
@@ -71,7 +71,7 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
         tvTitle.setText(name);
         tvDesc.setText(parentName);
         button.setText("Will be Late");
-        button2.setText("Prepare for Pickup");
+        button2.setText("Be Ready");
         return convertView;
     }
 }

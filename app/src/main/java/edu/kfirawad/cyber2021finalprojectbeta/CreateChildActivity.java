@@ -216,6 +216,7 @@ public class CreateChildActivity extends AppCompatActivity implements AdapterVie
                         dbRide.addChild(child);
                         dbRefRide.setValue(dbRide);
                         etName.setText("");
+                        Toast.makeText(CreateChildActivity.this, "Added child " + name + "!", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         Log.e(TAG, "onClick_btnCreate:singleUserL:onDataChange:getValue", e);
                     }

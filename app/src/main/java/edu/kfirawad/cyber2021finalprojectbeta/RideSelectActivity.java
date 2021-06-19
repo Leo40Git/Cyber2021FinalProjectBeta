@@ -109,7 +109,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
         badgeDrawable = BadgeDrawable.create(this);
         badgeDrawable.setVisible(false);
         badgeDrawable.setBadgeGravity(BadgeDrawable.BOTTOM_END);
-        badgeDrawable.setMaxCharacterCount(1);
+        badgeDrawable.setMaxCharacterCount(2);
     }
 
     @Override
