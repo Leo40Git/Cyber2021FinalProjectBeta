@@ -58,25 +58,30 @@ public class InvitesActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null)
                 convertView = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.list_item_button2, parent, false);
+                        .inflate(R.layout.invite_list_item, parent, false);
             final DBUser.Invite invite = getItem(position);
 
             TextView tvTitle = convertView.findViewById(R.id.tvTitle);
             TextView tvDesc = convertView.findViewById(R.id.tvDesc);
-            Button button = convertView.findViewById(R.id.button);
-            Button button2 = convertView.findViewById(R.id.button2);
+            Button btnDeny = convertView.findViewById(R.id.btnDeny);
+            Button btnAccept = convertView.findViewById(R.id.btnAccept);
             if (invite == null) {
                 tvTitle.setText("TO: <unknown>");
                 tvDesc.setText("<unknown>");
-                button.setText("???");
-                button.setOnClickListener(v -> { });
-                button2.setText("???");
-                button2.setOnClickListener(v -> { });
+                btnDeny.setEnabled(false);
+                btnAccept.setEnabled(false);
             } else {
                 tvTitle.setText("TO: " + invite.rideName);
                 tvDesc.setText(invite.perms.toString());
-                button.setText("Accept");
-                button.setOnClickListener(v -> {
+                btnDeny.setEnabled(true);
+                btnDeny.setOnClickListener(v -> {
+                    btnDeny.setEnabled(false);
+                    dbUser.invites.remove(position);
+                    dbRefUser.setValue(dbUser);
+                });
+                btnAccept.setEnabled(true);
+                btnAccept.setOnClickListener(v -> {
+                    btnAccept.setEnabled(false);
                     DatabaseReference dbRideRef = fbDb.getReference("rides/" + invite.rideUid);
                     dbRideRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -109,13 +114,9 @@ public class InvitesActivity extends AppCompatActivity {
                         public void onCancelled(@NonNull DatabaseError error) {
                             Log.e(TAG, "dbRefRideL:onCancelled", error.toException());
                             Toast.makeText(InvitesActivity.this, "Failed to accept invite!", Toast.LENGTH_SHORT).show();
+                            btnAccept.setEnabled(true);
                         }
                     });
-                });
-                button2.setText("Deny");
-                button2.setOnClickListener(v -> {
-                    dbUser.invites.remove(position);
-                    dbRefUser.setValue(dbUser);
                 });
             }
             return convertView;

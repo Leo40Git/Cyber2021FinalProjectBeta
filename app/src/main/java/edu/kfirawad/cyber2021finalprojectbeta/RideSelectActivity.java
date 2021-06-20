@@ -231,6 +231,7 @@ public class RideSelectActivity extends AppCompatActivity implements AdapterView
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String rideUid = adapter.getItem(position);
         Intent intent = new Intent(this, DashboardActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(DashboardActivity.RIDE_UID, rideUid);
         startActivity(intent);
     }

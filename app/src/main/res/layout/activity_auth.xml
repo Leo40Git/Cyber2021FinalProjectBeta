@@ -8,122 +8,128 @@
         android:orientation="vertical"
         android:padding="4dp">
 
-    <LinearLayout
+    <TextView
+            android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="Log In"
+            android:textAlignment="center"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/layName"
+            android:visibility="gone">
 
         <TextView
-                android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Log In"
-                android:textAlignment="center"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-
-        <Space
-                android:layout_width="match_parent"
-                android:layout_height="12sp" />
-
-        <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/layName"
-                android:visibility="gone">
-
-            <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Name" />
-
-            <EditText
-                    android:id="@+id/etName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPersonName" />
-
-        </LinearLayout>
-
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="E-mail" />
+                android:text="Name" />
 
         <EditText
-                android:id="@+id/etEmail"
+                android:id="@+id/etName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="textEmailAddress" />
+                android:inputType="textPersonName" />
 
-        <TextView
+    </LinearLayout>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="E-mail" />
+
+    <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textEmailAddress" />
+
+    <Space
+            android:layout_width="match_parent"
+            android:layout_height="12sp" />
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Password" />
+
+    <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        <EditText
+                android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Password" />
+                android:ems="10"
+                android:inputType="textPassword" />
 
-        <RelativeLayout
+        <ImageButton
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_hidden"
+                android:id="@+id/btnShowPassword"
+                android:layout_alignParentEnd="true"
+                android:onClick="onClick_btnShowPassword"
+                android:background="@null"
+                android:layout_alignParentStart="false"
+                android:layout_centerInParent="true"
+                android:padding="8dp" />
+    </RelativeLayout>
 
-            <EditText
-                    android:id="@+id/etPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPassword" />
+    <Space
+            android:layout_width="match_parent"
+            android:layout_height="12sp" />
 
-            <ImageButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_hidden"
-                    android:id="@+id/btnShowPassword"
-                    android:layout_alignParentEnd="true"
-                    android:onClick="onClick_btnShowPassword"
-                    android:background="@null"
-                    android:layout_alignParentStart="false"
-                    android:layout_centerInParent="true"
-                    android:padding="8dp" />
-        </RelativeLayout>
+    <Button
+            android:id="@+id/btnAction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="onClick_btnAction"
+            android:text="Log In" />
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/layForgotPassword">
 
         <Space
                 android:layout_width="match_parent"
-                android:layout_height="12sp" />
+                android:layout_height="24sp" />
 
         <Button
-                android:id="@+id/btnAction"
+                android:text="Forgot your password?"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:onClick="onClick_btnAction"
-                android:text="Log In" />
+                android:id="@+id/btnForgotPassword"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:onClick="onClick_btnForgotPassword" />
     </LinearLayout>
 
     <Space
             android:layout_width="match_parent"
             android:layout_height="24sp" />
 
-    <LinearLayout
+    <TextView
+            android:id="@+id/tvSwitchBtnDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:orientation="vertical">
+            android:text="Don't have an account?"
+            android:textAlignment="center" />
 
-        <TextView
-                android:id="@+id/tvSwitchBtnDesc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Don't have an account?"
-                android:textAlignment="center" />
-
-        <Button
-                android:id="@+id/btnSwitch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="onClick_btnSwitch"
-                android:text="Register" />
-    </LinearLayout>
+    <Button
+            android:id="@+id/btnSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClick_btnSwitch"
+            android:text="Register" />
 
 </LinearLayout>

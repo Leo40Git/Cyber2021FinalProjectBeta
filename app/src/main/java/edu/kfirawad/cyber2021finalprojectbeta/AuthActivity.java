@@ -29,6 +29,7 @@ public class AuthActivity extends AppCompatActivity {
     private EditText etName, etEmail, etPassword;
     private ImageButton btnShowPassword;
     private Button btnAction;
+    private LinearLayout layForgotPassword;
     private TextView tvSwitchBtnDesc;
     private Button btnSwitch;
 
@@ -46,6 +47,7 @@ public class AuthActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnShowPassword = findViewById(R.id.btnShowPassword);
         btnAction = findViewById(R.id.btnAction);
+        layForgotPassword = findViewById(R.id.layForgotPassword);
         tvSwitchBtnDesc = findViewById(R.id.tvSwitchBtnDesc);
         btnSwitch = findViewById(R.id.btnSwitch);
 
@@ -80,6 +82,7 @@ public class AuthActivity extends AppCompatActivity {
         layName.setVisibility(isRegistering ? View.VISIBLE : View.GONE);
         etName.setText("");
         btnAction.setText(isRegistering ? "Register" : "Log In");
+        layForgotPassword.setVisibility(isRegistering ? View.GONE : View.VISIBLE);
         tvSwitchBtnDesc.setText(isRegistering ? "Already have an account?" : "Don't have an account?");
         btnSwitch.setText(isRegistering ? "Log In" : "Register");
     }
@@ -173,5 +176,10 @@ public class AuthActivity extends AppCompatActivity {
             btnShowPassword.setImageResource(R.drawable.ic_hidden);
             etPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
         }
+    }
+
+    public void onClick_btnForgotPassword(View view) {
+        Intent i = new Intent(this, ResetPasswordActivity.class);
+        startActivity(i);
     }
 }
