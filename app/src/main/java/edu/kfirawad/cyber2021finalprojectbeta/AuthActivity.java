@@ -30,6 +30,7 @@ public class AuthActivity extends AppCompatActivity {
     private ImageButton btnShowPassword;
     private Button btnAction;
     private LinearLayout layForgotPassword;
+    private Button btnForgotPassword;
     private TextView tvSwitchBtnDesc;
     private Button btnSwitch;
 
@@ -48,6 +49,7 @@ public class AuthActivity extends AppCompatActivity {
         btnShowPassword = findViewById(R.id.btnShowPassword);
         btnAction = findViewById(R.id.btnAction);
         layForgotPassword = findViewById(R.id.layForgotPassword);
+        btnForgotPassword = findViewById(R.id.btnForgotPassword);
         tvSwitchBtnDesc = findViewById(R.id.tvSwitchBtnDesc);
         btnSwitch = findViewById(R.id.btnSwitch);
 
@@ -107,6 +109,7 @@ public class AuthActivity extends AppCompatActivity {
             return;
         }
         btnAction.setEnabled(false);
+        btnForgotPassword.setEnabled(false);
         btnSwitch.setEnabled(false);
         if (isRegistering)
             createAccount(name, email, password);
@@ -116,6 +119,7 @@ public class AuthActivity extends AppCompatActivity {
 
     private void enableButtons() {
         btnAction.setEnabled(true);
+        btnForgotPassword.setEnabled(true);
         btnSwitch.setEnabled(true);
     }
 

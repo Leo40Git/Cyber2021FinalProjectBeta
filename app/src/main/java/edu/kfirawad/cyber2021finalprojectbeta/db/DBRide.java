@@ -181,8 +181,13 @@ public final class DBRide extends DBObject {
 
     @IgnoreExtraProperties
     public static final class ChildData {
+        public static final int NOT_NOTIFIED = 0;
+        public static final int NOTIFIED = 1;
+        public static final int NOTIFIED_AND_PUSHED = 2;
+
         public @NotNull String name, parentUid, parentName, pickupSpot;
         public boolean comingToday, pickedUp, droppedOff;
+        public int notifiedLate, notifiedReady;
 
         /**
          * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
@@ -214,6 +219,8 @@ public final class DBRide extends DBObject {
             comingToday = true;
             pickedUp = false;
             droppedOff = false;
+            notifiedLate = NOT_NOTIFIED;
+            notifiedReady = NOT_NOTIFIED;
         }
     }
 }

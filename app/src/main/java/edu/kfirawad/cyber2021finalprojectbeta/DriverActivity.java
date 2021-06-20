@@ -6,11 +6,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
 import edu.kfirawad.cyber2021finalprojectbeta.fragment.ChildListFragment;
 
@@ -37,6 +40,25 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
     }
 
     @Override
+    protected void onDBRideUpdated() {
+        switch (dbRide.state) {
+        case DBRide.STATE_INACTIVE:
+            Toast.makeText(this, "Ride hasn't started yet!", Toast.LENGTH_SHORT).show();
+            finish();
+            break;
+        case DBRide.STATE_ACTIVE_DROPOFF:
+            Toast.makeText(this, "Ride has ended!", Toast.LENGTH_SHORT).show();
+            finish();
+            break;
+        default:
+            Toast.makeText(this, "Unknown state?!", Toast.LENGTH_SHORT).show();
+            finish();
+        case DBRide.STATE_ACTIVE_PICKUP:
+            break;
+        }
+    }
+
+    @Override
     protected int getOptionsMenu() {
         return R.menu.driver;
     }
@@ -44,7 +66,8 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menuEndDrive) {
-            // TODO
+            dbRide.finishPickUpAndStartDropOff();
+            dbRefRide.setValue(dbRide);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -66,12 +89,48 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
                     .inflate(R.layout.driver_list_item, parent, false);
         TextView tvTitle = convertView.findViewById(R.id.tvTitle);
         TextView tvDesc = convertView.findViewById(R.id.tvDesc);
-        Button button = convertView.findViewById(R.id.button);
-        Button button2 = convertView.findViewById(R.id.button2);
+        TextView tvNotToday = convertView.findViewById(R.id.tvNotToday);
+        LinearLayout layBtns = convertView.findViewById(R.id.layBtns);
+        Button btnLate = convertView.findViewById(R.id.btnLate);
+        Button btnReady = convertView.findViewById(R.id.btnReady);
         tvTitle.setText(name);
-        tvDesc.setText(parentName);
-        button.setText("Will be Late");
-        button2.setText("Be Ready");
+        tvDesc.setText(pickupSpot);
+        if (dbRide.isChildComingToday(uid)) {
+            tvNotToday.setVisibility(View.GONE);
+            layBtns.setVisibility(View.VISIBLE);
+            DBRide.ChildData data = dbRide.children.get(uid);
+            if (data == null) {
+                // huh
+                btnLate.setEnabled(false);
+                btnReady.setEnabled(false);
+            } else {
+                if (data.notifiedLate > DBRide.ChildData.NOT_NOTIFIED)
+                    btnLate.setEnabled(false);
+                else {
+                    btnLate.setEnabled(true);
+                    btnLate.setOnClickListener(v -> {
+                        btnLate.setEnabled(false);
+                        data.notifiedLate = DBRide.ChildData.NOTIFIED;
+                        dbRefRide.setValue(dbRide);
+                    });
+                }
+                if (data.notifiedReady > DBRide.ChildData.NOT_NOTIFIED)
+                    btnReady.setEnabled(false);
+                else {
+                    btnReady.setEnabled(true);
+                    btnReady.setOnClickListener(v -> {
+                        btnReady.setEnabled(false);
+                        data.notifiedReady = DBRide.ChildData.NOTIFIED;
+                        dbRefRide.setValue(dbRide);
+                    });
+                }
+            }
+        } else {
+            tvNotToday.setVisibility(View.VISIBLE);
+            layBtns.setVisibility(View.GONE);
+            btnLate.setEnabled(false);
+            btnReady.setEnabled(false);
+        }
         return convertView;
     }
 }

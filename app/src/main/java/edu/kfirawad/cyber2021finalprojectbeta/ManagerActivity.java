@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,6 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Objects;
 
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBChild;
+import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
 import edu.kfirawad.cyber2021finalprojectbeta.fragment.ChildListFragment;
@@ -191,5 +194,31 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
         Intent i = new Intent(this, CreateChildActivity.class);
         i.putExtra(RIDE_UID, rideUid);
         startActivity(i);
+    }
+
+    @Override
+    protected int getOptionsMenu() {
+        return R.menu.manager;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        boolean canStartRide = false;
+        if (dbRide != null)
+            canStartRide = DBRide.STATE_INACTIVE.equals(dbRide.state);
+        setMenuItemEnabled(menu, R.id.menuStartRide, canStartRide);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menuStartRide) {
+            if (dbRide != null) {
+                dbRide.startPickUp();
+                dbRefRide.setValue(dbRide);
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

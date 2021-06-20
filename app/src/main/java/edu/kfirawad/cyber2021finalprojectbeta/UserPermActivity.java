@@ -213,7 +213,7 @@ public abstract class UserPermActivity extends AppCompatActivity {
         }
     }
 
-    private void setMenuItemEnabled(Menu menu, @IdRes int menuItemId, boolean enabled) {
+    protected final void setMenuItemEnabled(Menu menu, @IdRes int menuItemId, boolean enabled) {
         MenuItem menuItem = menu.findItem(menuItemId);
         if (menuItem == null)
             return;
