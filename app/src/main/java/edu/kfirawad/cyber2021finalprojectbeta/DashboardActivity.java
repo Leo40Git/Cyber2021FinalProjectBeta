@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
 
 public class DashboardActivity extends UserPermActivity {
-    private Button btnManager, btnDriver, btnParent, btnAide;
+    private Button btnManager, btnDriver, btnParent, btnTeacher;
 
     public DashboardActivity() {
         super("C2021FPB:Dashboard");
@@ -24,7 +24,7 @@ public class DashboardActivity extends UserPermActivity {
         btnManager = findViewById(R.id.btnManager);
         btnDriver = findViewById(R.id.btnDriver);
         btnParent = findViewById(R.id.btnParent);
-        btnAide = findViewById(R.id.btnTeacher);
+        btnTeacher = findViewById(R.id.btnTeacher);
 
         findToolbar();
     }
@@ -34,7 +34,7 @@ public class DashboardActivity extends UserPermActivity {
         btnManager.setEnabled(perms.manager);
         btnDriver.setEnabled(perms.driver);
         btnParent.setEnabled(perms.parent);
-        btnAide.setEnabled(perms.teacher);
+        btnTeacher.setEnabled(perms.teacher);
         return true;
     }
 

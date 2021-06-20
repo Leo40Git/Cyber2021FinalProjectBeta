@@ -141,14 +141,14 @@ public final class DBRide extends DBObject {
             return;
         state = STATE_ACTIVE_PICKUP;
         // TODO notify driver
-        // TODO notify parents and aides
+        // TODO notify parents and teachers
     }
 
     public void finishPickUpAndStartDropOff() {
         if (!STATE_ACTIVE_PICKUP.equals(state))
             return;
         state = STATE_ACTIVE_DROPOFF;
-        // TODO notify parents and aides
+        // TODO notify parents and teachers
     }
 
     public void finishDropOff() {

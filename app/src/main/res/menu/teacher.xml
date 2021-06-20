@@ -12,9 +12,15 @@
         android:id="@+id/menuDriver"
         android:title="Driver" />
     <item
-        android:id="@+id/menuAide"
-        android:title="Aide" />
+        android:id="@+id/menuTeacher"
+        android:title="Teacher" />
     <item
         android:id="@+id/menuParent"
         android:title="Parent" />
+    <item
+            android:title="Credits"
+            android:id="@+id/menuCredits" />
+    <item
+            android:title="Exit"
+            android:id="@+id/menuExit" />
 </menu>

@@ -191,7 +191,7 @@ public abstract class UserPermActivity extends AppCompatActivity {
             userPerms = DBUserPerms.create();
         setMenuItemEnabled(menu, R.id.menuManager, userPerms.manager);
         setMenuItemEnabled(menu, R.id.menuDriver, userPerms.driver);
-        setMenuItemEnabled(menu, R.id.menuAide, userPerms.teacher);
+        setMenuItemEnabled(menu, R.id.menuTeacher, userPerms.teacher);
         setMenuItemEnabled(menu, R.id.menuParent, userPerms.parent);
         return menu.hasVisibleItems();
     }
@@ -236,7 +236,7 @@ public abstract class UserPermActivity extends AppCompatActivity {
                 startActivity(i);
             }
             return true;
-        } else if (id == R.id.menuAide) {
+        } else if (id == R.id.menuTeacher) {
             if (getClass() != TeacherActivity.class) {
                 Intent i = new Intent(this, TeacherActivity.class);
                 startActivity(i);

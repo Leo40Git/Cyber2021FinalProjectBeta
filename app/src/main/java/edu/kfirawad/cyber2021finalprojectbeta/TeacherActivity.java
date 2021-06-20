@@ -20,7 +20,7 @@ import edu.kfirawad.cyber2021finalprojectbeta.fragment.ChildListFragment;
 
 public class TeacherActivity extends UserPermActivity implements ChildListFragment.Callback {
     public TeacherActivity() {
-        super("CFPB2021:Aide");
+        super("CFPB2021:Teacher");
     }
 
     @Override
@@ -117,14 +117,14 @@ public class TeacherActivity extends UserPermActivity implements ChildListFragme
                 cbPickedUp.setChecked(data.pickedUp);
                 cbPickedUp.setOnCheckedChangeListener((v, checked) -> {
                     data.pickedUp = checked;
-                    dbRefRide.setValue(dbRefRide);
+                    dbRefRide.setValue(dbRide);
                 });
                 cbDroppedOff.setChecked(data.droppedOff);
                 if (DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state)) {
                     cbDroppedOff.setEnabled(true);
                     cbDroppedOff.setOnCheckedChangeListener((v, checked) -> {
                         data.droppedOff = checked;
-                        dbRefRide.setValue(dbRefRide);
+                        dbRefRide.setValue(dbRide);
                     });
                 } else
                     cbDroppedOff.setEnabled(false);
