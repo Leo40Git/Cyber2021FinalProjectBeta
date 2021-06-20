@@ -73,7 +73,7 @@ public class ParentActivity extends UserPermActivity implements ChildListFragmen
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(desc)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .build();
         notifyManager.notify(tag, nId++, n);
     }
