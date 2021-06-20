@@ -104,23 +104,23 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
                 btnLate.setEnabled(false);
                 btnReady.setEnabled(false);
             } else {
-                if (data.notifiedLate > DBRide.ChildData.NOT_NOTIFIED)
+                if (data.lateNotifyState > DBRide.ChildData.NOTIFY_STATE_NO)
                     btnLate.setEnabled(false);
                 else {
                     btnLate.setEnabled(true);
                     btnLate.setOnClickListener(v -> {
                         btnLate.setEnabled(false);
-                        data.notifiedLate = DBRide.ChildData.NOTIFIED;
+                        data.lateNotifyState = DBRide.ChildData.NOTIFY_STATE_YES;
                         dbRefRide.setValue(dbRide);
                     });
                 }
-                if (data.notifiedReady > DBRide.ChildData.NOT_NOTIFIED)
+                if (data.readyNotifyState > DBRide.ChildData.NOTIFY_STATE_NO)
                     btnReady.setEnabled(false);
                 else {
                     btnReady.setEnabled(true);
                     btnReady.setOnClickListener(v -> {
                         btnReady.setEnabled(false);
-                        data.notifiedReady = DBRide.ChildData.NOTIFIED;
+                        data.readyNotifyState = DBRide.ChildData.NOTIFY_STATE_YES;
                         dbRefRide.setValue(dbRide);
                     });
                 }

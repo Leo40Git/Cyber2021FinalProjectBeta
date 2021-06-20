@@ -1,11 +1,16 @@
 package edu.kfirawad.cyber2021finalprojectbeta.db;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.annotations.NotNull;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -181,13 +186,19 @@ public final class DBRide extends DBObject {
 
     @IgnoreExtraProperties
     public static final class ChildData {
-        public static final int NOT_NOTIFIED = 0;
-        public static final int NOTIFIED = 1;
-        public static final int NOTIFIED_AND_PUSHED = 2;
+        @Target(ElementType.FIELD)
+        @Retention(RetentionPolicy.SOURCE)
+        @IntDef({ NOTIFY_STATE_NO, NOTIFY_STATE_YES, NOTIFY_STATE_YES_AND_PUSHED })
+        private @interface NotifyState { }
+
+        public static final int NOTIFY_STATE_NO = 0;
+        public static final int NOTIFY_STATE_YES = 1;
+        public static final int NOTIFY_STATE_YES_AND_PUSHED = 2;
 
         public @NotNull String name, parentUid, parentName, pickupSpot;
-        public boolean comingToday, pickedUp, droppedOff;
-        public int notifiedLate, notifiedReady;
+        public boolean comingToday;
+        public @NotifyState int lateNotifyState, readyNotifyState;
+        public boolean pickedUp, droppedOff, notifiedPickedUp, notifiedDroppedOff;
 
         /**
          * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
@@ -217,10 +228,12 @@ public final class DBRide extends DBObject {
 
         public void reset() {
             comingToday = true;
+            lateNotifyState = NOTIFY_STATE_NO;
+            readyNotifyState = NOTIFY_STATE_NO;
             pickedUp = false;
             droppedOff = false;
-            notifiedLate = NOT_NOTIFIED;
-            notifiedReady = NOT_NOTIFIED;
+            notifiedPickedUp = false;
+            notifiedDroppedOff = false;
         }
     }
 }
