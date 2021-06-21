@@ -73,7 +73,7 @@
         <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_hidden"
+                app:srcCompat="@drawable/ic_show"
                 android:id="@+id/btnShowPassword"
                 android:layout_alignParentEnd="true"
                 android:onClick="onClick_btnShowPassword"

@@ -180,10 +180,10 @@ public class AuthActivity extends AppCompatActivity {
     private void setPasswordShown(boolean passwordShown) {
         this.passwordShown = passwordShown;
         if (passwordShown) {
-            btnShowPassword.setImageResource(R.drawable.ic_shown);
+            btnShowPassword.setImageResource(R.drawable.ic_hide);
             etPassword.setTransformationMethod(null);
         } else {
-            btnShowPassword.setImageResource(R.drawable.ic_hidden);
+            btnShowPassword.setImageResource(R.drawable.ic_show);
             etPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
         }
     }
