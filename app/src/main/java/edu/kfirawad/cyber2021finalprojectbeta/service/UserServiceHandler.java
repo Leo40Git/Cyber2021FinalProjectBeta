@@ -1,5 +1,6 @@
 package edu.kfirawad.cyber2021finalprojectbeta.service;
 
+import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -21,17 +22,24 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
+import edu.kfirawad.cyber2021finalprojectbeta.db.DBLatLng;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
-import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
 
 public class UserServiceHandler extends Handler {
     private static final String TAG = "C2021FPB:servhnd:User";
 
+    public interface SimpleLocationListener {
+        void onLocationChanged(Location location);
+    }
+
     public interface Hooks {
         void killService();
         void pushNotification(String title, String desc);
+        void addLocationListener(SimpleLocationListener listener);
+        void removeLocationListener(SimpleLocationListener listener);
     }
 
     public UserServiceHandler(Looper looper) {
@@ -43,6 +51,8 @@ public class UserServiceHandler extends Handler {
     private FirebaseAuth.AuthStateListener authStateListener;
 
     private FirebaseDatabase fbDb;
+
+    private SimpleLocationListener locationListener;
 
     public static final class RefLisPair {
         public final DatabaseReference ref;
@@ -68,7 +78,7 @@ public class UserServiceHandler extends Handler {
         private final HashMap<String, RefLisPair> dbRefRides = new HashMap<>();
         private final HashSet<String> removedRides = new HashSet<>();
         
-        public DatabaseListener(@NonNull Hooks hooks) {
+        public DatabaseListener() {
             final String userId = fbUser.getUid();
             dbRefUser = new RefLisPair(fbDb.getReference("users/" + userId), new ValueEventListener() {
                 private final HashSet<String> rideUids = new HashSet<>();
@@ -96,7 +106,7 @@ public class UserServiceHandler extends Handler {
                     }
                     if (dbUser == null)
                         return;
-                    onDBUserUpdated(hooks, rideUids);
+                    onDBUserUpdated(rideUids);
                 }
 
                 @Override
@@ -106,7 +116,7 @@ public class UserServiceHandler extends Handler {
             });
         }
 
-        private void onDBUserUpdated(@NonNull Hooks hooks, @NonNull Set<String> rideUids) {
+        private void onDBUserUpdated(@NonNull Set<String> rideUids) {
             rideUids.clear();
             rideUids.addAll(dbUser.rides.keySet());
             Iterator<Map.Entry<String, RefLisPair>> it = dbRefRides.entrySet().iterator();
@@ -134,7 +144,7 @@ public class UserServiceHandler extends Handler {
                                 Log.e(TAG, "dbRefRide:onDataChange:getValue:exception", e);
                             }
                             if (dbRide != null)
-                                onDBRideUpdated(hooks, newRef, dbRide);
+                                onDBRideUpdated(newRef, dbRide);
                         } else
                             removedRides.add(newUid);
                     }
@@ -148,8 +158,7 @@ public class UserServiceHandler extends Handler {
             }
         }
 
-        private void onDBRideUpdated(@NonNull Hooks hooks,
-                                     @NonNull DatabaseReference dbRefRide, @NonNull DBRide dbRide) {
+        private void onDBRideUpdated(@NonNull DatabaseReference dbRefRide, @NonNull DBRide dbRide) {
             if (!removedRides.isEmpty()) {
                 for (String removedUid : removedRides) {
                     RefLisPair pair = dbRefRides.remove(removedUid);
@@ -219,6 +228,18 @@ public class UserServiceHandler extends Handler {
 
             if (modified)
                 dbRefRide.setValue(dbRide);
+
+            if (userData.perms.driver && DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state)) {
+                if (locationListener == null) {
+                    locationListener = location -> {
+                        dbRide.driverLocation = DBLatLng.create(location.getLatitude(), location.getLongitude());
+                        dbRefRide.setValue(dbRide);
+                    };
+                }
+            } else if (locationListener != null) {
+                hooks.removeLocationListener(locationListener);
+                locationListener = null;
+            }
         }
 
         public void cleanup() {
@@ -226,14 +247,18 @@ public class UserServiceHandler extends Handler {
             for (RefLisPair pair : dbRefRides.values())
                 pair.cleanup();
             dbRefRides.clear();
+            if (locationListener != null) {
+                hooks.removeLocationListener(locationListener);
+                locationListener = null;
+            }
         }
     }
 
+    private Hooks hooks;
     private DatabaseListener dbLis;
 
     @Override
     public void handleMessage(@NonNull Message msg) {
-        Hooks hooks;
         if (msg.obj instanceof Hooks)
             hooks = (Hooks) msg.obj;
         else
@@ -255,10 +280,15 @@ public class UserServiceHandler extends Handler {
         fbAuth.addAuthStateListener(authStateListener);
 
         fbDb = FirebaseDatabase.getInstance();
-        dbLis = new DatabaseListener(hooks);
+        dbLis = new DatabaseListener();
     }
 
     private void killService(@NonNull Hooks hooks) {
+        cleanup();
+        hooks.killService();
+    }
+
+    public void cleanup() {
         if (fbAuth != null && authStateListener != null) {
             fbAuth.removeAuthStateListener(authStateListener);
             authStateListener = null;
@@ -268,7 +298,5 @@ public class UserServiceHandler extends Handler {
             dbLis.cleanup();
             dbLis = null;
         }
-
-        hooks.killService();
     }
 }

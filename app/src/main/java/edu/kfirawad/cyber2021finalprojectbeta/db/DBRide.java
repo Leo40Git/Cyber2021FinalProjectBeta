@@ -24,6 +24,7 @@ public final class DBRide extends DBObject {
     public int startHour, startMinute;
     public @NotNull Map<String, UserData> users;
     public @NotNull Map<String, ChildData> children;
+    public @NotNull DBLatLng driverLocation;
 
     /**
      * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
@@ -37,6 +38,7 @@ public final class DBRide extends DBObject {
         state = STATE_INACTIVE;
         users = new HashMap<>();
         children = new HashMap<>();
+        driverLocation = DBLatLng.create(0, 0);
     }
 
     public static @NonNull DBRide create(@NonNull String uid,
