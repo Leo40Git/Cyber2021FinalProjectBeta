@@ -113,12 +113,15 @@ public class TeacherActivity extends UserPermActivity implements ChildListFragme
                 cbPickedUp.setEnabled(false);
                 cbDroppedOff.setEnabled(false);
             } else {
-                cbPickedUp.setEnabled(true);
                 cbPickedUp.setChecked(data.pickedUp);
-                cbPickedUp.setOnCheckedChangeListener((v, checked) -> {
-                    data.pickedUp = checked;
-                    dbRefRide.setValue(dbRide);
-                });
+                if (DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state)) {
+                    cbPickedUp.setEnabled(true);
+                    cbPickedUp.setOnCheckedChangeListener((v, checked) -> {
+                        data.pickedUp = checked;
+                        dbRefRide.setValue(dbRide);
+                    });
+                } else
+                    cbPickedUp.setEnabled(false);
                 cbDroppedOff.setChecked(data.droppedOff);
                 if (DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state)) {
                     cbDroppedOff.setEnabled(true);

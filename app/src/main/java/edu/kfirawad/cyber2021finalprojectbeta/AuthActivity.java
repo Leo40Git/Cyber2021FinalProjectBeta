@@ -18,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
+import edu.kfirawad.cyber2021finalprojectbeta.service.UserService;
+
 public class AuthActivity extends AppCompatActivity {
     private static final String TAG = "C2021FPB:Main";
 
@@ -158,6 +160,10 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     private void toRideSelect() {
+        // also spin up user service
+        Intent si = new Intent(this, UserService.class);
+        startService(si);
+
         Intent intent = new Intent(this, RideSelectActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
