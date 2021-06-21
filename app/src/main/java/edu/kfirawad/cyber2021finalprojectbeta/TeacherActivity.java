@@ -2,7 +2,6 @@ package edu.kfirawad.cyber2021finalprojectbeta;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
@@ -34,6 +36,12 @@ public class TeacherActivity extends UserPermActivity implements ChildListFragme
                         rideUid, false))
                 .commit();
     }
+    
+    private static final class SavedState {
+        public boolean pickedUp, droppedOff;
+    }
+
+    private final HashMap<String, SavedState> savedStates = new HashMap<>();
 
     @Override
     protected boolean hasRequiredPermission(@NonNull DBUserPerms perms) {
@@ -65,6 +73,14 @@ public class TeacherActivity extends UserPermActivity implements ChildListFragme
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menuSave) {
             if (dbRide != null) {
+                for (Map.Entry<String, SavedState> entry : savedStates.entrySet()) {
+                    SavedState state = entry.getValue();
+                    DBRide.ChildData data = dbRide.children.get(entry.getKey());
+                    if (data == null)
+                        continue;
+                    data.pickedUp = state.pickedUp;
+                    data.droppedOff = state.droppedOff;
+                }
                 dbRide.finishDropOff();
                 if (DBRide.STATE_INACTIVE.equals(dbRide.state)) {
                     if (dbRefRideL != null) {
@@ -106,25 +122,34 @@ public class TeacherActivity extends UserPermActivity implements ChildListFragme
         if (dbRide.isChildComingToday(uid)) {
             tvNotToday.setVisibility(View.GONE);
             layBtns.setVisibility(View.VISIBLE);
-            DBRide.ChildData data = dbRide.children.get(uid);
-            if (data == null) {
-                // huh
-                cbPickedUp.setEnabled(false);
-                cbDroppedOff.setEnabled(false);
-            } else {
-                cbPickedUp.setChecked(data.pickedUp);
-                if (DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state)) {
-                    cbPickedUp.setEnabled(true);
-                    cbPickedUp.setOnCheckedChangeListener((v, checked) -> data.pickedUp = checked);
-                } else
+            SavedState state = savedStates.get(uid);
+            if (state == null) {
+                DBRide.ChildData data = dbRide.children.get(uid);
+                if (data == null) {
+                    // huh
                     cbPickedUp.setEnabled(false);
-                cbDroppedOff.setChecked(data.droppedOff);
-                if (data.pickedUp && DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state)) {
-                    cbDroppedOff.setEnabled(true);
-                    cbDroppedOff.setOnCheckedChangeListener((v, checked) -> data.droppedOff = checked);
-                } else
                     cbDroppedOff.setEnabled(false);
+                    return convertView;
+                } else {
+                    state = new SavedState();
+                    state.pickedUp = data.pickedUp;
+                    state.droppedOff = data.droppedOff;
+                    savedStates.put(uid, state);
+                }
             }
+            final SavedState state2 = state;
+            cbPickedUp.setChecked(state.pickedUp);
+            if (DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state)) {
+                cbPickedUp.setEnabled(true);
+                cbPickedUp.setOnCheckedChangeListener((v, checked) -> state2.pickedUp = checked);
+            } else
+                cbPickedUp.setEnabled(false);
+            cbDroppedOff.setChecked(state.droppedOff);
+            if (state.pickedUp && DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state)) {
+                cbDroppedOff.setEnabled(true);
+                cbDroppedOff.setOnCheckedChangeListener((v, checked) -> state2.droppedOff = checked);
+            } else
+                cbDroppedOff.setEnabled(false);
         } else {
             tvNotToday.setVisibility(View.VISIBLE);
             layBtns.setVisibility(View.GONE);
