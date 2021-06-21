@@ -159,15 +159,30 @@ public class UserServiceHandler extends Handler {
                 removedRides.clear();
             }
 
-            DBUserPerms perms = dbRide.getUserPerms(dbUser);
-            if (perms == null) {
+            DBRide.UserData userData = dbRide.users.get(dbUser.uid);
+            if (userData == null) {
                 removedRides.add(dbRide.uid);
                 return;
             }
 
             boolean modified = false;
 
-            if (perms.parent) {
+            if (!userData.notifiedPickUp && DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state)) {
+                hooks.pushNotification(
+                        dbRide.name + ": Ride started!",
+                        "The driver has started the ride!");
+                userData.notifiedPickUp = true;
+                modified = true;
+            }
+            if (!userData.notifiedDropOff && DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state)) {
+                hooks.pushNotification(
+                        dbRide.name + ": At the destination!",
+                        "The driver has reached the destination!");
+                userData.notifiedDropOff = true;
+                modified = true;
+            }
+
+            if (userData.perms.parent) {
                 for (DBRide.ChildData data : dbRide.children.values()) {
                     if (!dbUser.uid.equals(data.parentUid))
                         continue;
