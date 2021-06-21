@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,10 +20,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Objects;
-
-import edu.kfirawad.cyber2021finalprojectbeta.db.DBChild;
-import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUser;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBUserPerms;
 import edu.kfirawad.cyber2021finalprojectbeta.fragment.ChildListFragment;
@@ -110,46 +104,44 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
                         "<b>Name:</b> " + name + "<br>"
                                 + "<b>E-mail:</b> " + email + "<br>"
                 ))
-                .setNegativeButton("Remove", (dialog, which) -> {
-                    new AlertDialog.Builder(ManagerActivity.this)
-                            .setTitle("Confirm Removal")
-                            .setMessage(Html.fromHtml(
-                                    "Are you <b>sure</b> you want to remove " + name + "?"
-                            ))
-                            .setNeutralButton(android.R.string.no, (dialog1, which1) -> dialog1.dismiss())
-                            .setNegativeButton(android.R.string.yes, (dialog1, which1) -> {
-                                dialog1.dismiss();
-                                dialog.dismiss();
-                                DatabaseReference dbRefUser = fbDb.getReference("users/" + uid);
-                                dbRefUser.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        if (snapshot.exists()) {
-                                            try {
-                                                DBUser user = snapshot.getValue(DBUser.class);
-                                                if (user == null)
-                                                    throw new NullPointerException("wot (" + uid + ")");
-                                                user.uid = uid;
-                                                dbRide.removeUser(user);
-                                                dbRefRide.setValue(dbRide);
-                                                dbRefUser.setValue(user);
-                                                Toast.makeText(ManagerActivity.this, "Removed user" + name, Toast.LENGTH_SHORT).show();
-                                            } catch (Exception e) {
-                                                Log.e(tag, "onUserSelected:singleUserL:onDataChange:getValue", e);
-                                            }
-                                        } else
-                                            Toast.makeText(ManagerActivity.this, "User does not exist?!", Toast.LENGTH_LONG).show();
-                                    }
+                .setNegativeButton("Remove", (dialog, which) -> new AlertDialog.Builder(ManagerActivity.this)
+                        .setTitle("Confirm Removal")
+                        .setMessage(Html.fromHtml(
+                                "Are you <b>sure</b> you want to remove " + name + "?"
+                        ))
+                        .setNeutralButton("No", (dialog1, which1) -> dialog1.dismiss())
+                        .setNegativeButton("Yes", (dialog1, which1) -> {
+                            dialog1.dismiss();
+                            dialog.dismiss();
+                            DatabaseReference dbRefUser = fbDb.getReference("users/" + uid);
+                            dbRefUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        try {
+                                            DBUser user = snapshot.getValue(DBUser.class);
+                                            if (user == null)
+                                                throw new NullPointerException("wot (" + uid + ")");
+                                            user.uid = uid;
+                                            dbRide.removeUser(user);
+                                            dbRefRide.setValue(dbRide);
+                                            dbRefUser.setValue(user);
+                                            Toast.makeText(ManagerActivity.this, "Removed user" + name, Toast.LENGTH_SHORT).show();
+                                        } catch (Exception e) {
+                                            Log.e(tag, "onUserSelected:singleUserL:onDataChange:getValue", e);
+                                        }
+                                    } else
+                                        Toast.makeText(ManagerActivity.this, "User does not exist?!", Toast.LENGTH_LONG).show();
+                                }
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-                                        Log.e(tag, "onUserSelected:singleUserL:onCancelled", error.toException());
-                                        Toast.makeText(ManagerActivity.this, "Failed to remove user!", Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                            })
-                            .show();
-                })
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Log.e(tag, "onUserSelected:singleUserL:onCancelled", error.toException());
+                                    Toast.makeText(ManagerActivity.this, "Failed to remove user!", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        })
+                        .show())
                 .show();
     }
 
@@ -177,8 +169,8 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
                             .setMessage(Html.fromHtml(
                                     "Are you <b>sure</b> you want to delete " + name + "?"
                             ))
-                            .setNeutralButton(android.R.string.no, (dialog1, which1) -> dialog1.dismiss())
-                            .setNegativeButton(android.R.string.yes, (dialog1, which1) -> {
+                            .setNeutralButton("No", (dialog1, which1) -> dialog1.dismiss())
+                            .setNegativeButton("Yes", (dialog1, which1) -> {
                                 dialog1.dismiss();
                                 dialog.dismiss();
                                 dbRide.children.remove(uid);
@@ -194,31 +186,5 @@ public class ManagerActivity extends UserPermActivity implements UserListFragmen
         Intent i = new Intent(this, CreateChildActivity.class);
         i.putExtra(RIDE_UID, rideUid);
         startActivity(i);
-    }
-
-    @Override
-    protected int getOptionsMenu() {
-        return R.menu.manager;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean canStartRide = false;
-        if (dbRide != null)
-            canStartRide = DBRide.STATE_INACTIVE.equals(dbRide.state);
-        setMenuItemEnabled(menu, R.id.menuStartRide, canStartRide);
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menuStartRide) {
-            if (dbRide != null) {
-                dbRide.startPickUp();
-                dbRefRide.setValue(dbRide);
-            }
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

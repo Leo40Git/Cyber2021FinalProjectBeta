@@ -1,5 +1,6 @@
 package edu.kfirawad.cyber2021finalprojectbeta;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -42,17 +43,14 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
     @Override
     protected void onDBRideUpdated() {
         switch (dbRide.state) {
-        case DBRide.STATE_INACTIVE:
-            Toast.makeText(this, "Ride hasn't started yet!", Toast.LENGTH_SHORT).show();
-            finish();
-            break;
         case DBRide.STATE_ACTIVE_DROPOFF:
-            Toast.makeText(this, "Ride has ended!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "You're already at the destination!", Toast.LENGTH_SHORT).show();
             finish();
             break;
         default:
             Toast.makeText(this, "Unknown state?!", Toast.LENGTH_SHORT).show();
             finish();
+        case DBRide.STATE_INACTIVE:
         case DBRide.STATE_ACTIVE_PICKUP:
             break;
         }
@@ -65,9 +63,23 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menuEndDrive) {
-            dbRide.finishPickUpAndStartDropOff();
-            dbRefRide.setValue(dbRide);
+        if (item.getItemId() == R.id.menuToggleDrive) {
+            if (DBRide.STATE_INACTIVE.equals(dbRide.state)) {
+                dbRide.startPickUp();
+                dbRefRide.setValue(dbRide);
+                item.setIcon(R.drawable.ic_stop);
+                item.setTitle("End Drive");
+            } else {
+                new AlertDialog.Builder(this)
+                        .setTitle("Confirm End Drive")
+                        .setMessage("Are you at the destination?")
+                        .setNeutralButton("No", (dialog, which) -> dialog.dismiss())
+                        .setNegativeButton("Yes", (dialog, which) -> {
+                            dbRide.finishPickUpAndStartDropOff();
+                            dbRefRide.setValue(dbRide);
+                        })
+                        .show();
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
