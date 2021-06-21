@@ -189,10 +189,14 @@ public abstract class UserPermActivity extends AppCompatActivity {
             userPerms = dbRide.getUserPerms(dbUser);
         if (userPerms == null)
             userPerms = DBUserPerms.create();
-        setMenuItemEnabled(menu, R.id.menuManager, userPerms.manager);
-        setMenuItemEnabled(menu, R.id.menuDriver, userPerms.driver);
-        setMenuItemEnabled(menu, R.id.menuTeacher, userPerms.teacher);
-        setMenuItemEnabled(menu, R.id.menuParent, userPerms.parent);
+        setMenuItemEnabled(menu, R.id.menuManager, userPerms.manager
+                && getClass() != ManagerActivity.class);
+        setMenuItemEnabled(menu, R.id.menuDriver, userPerms.driver
+                && getClass() != DriverActivity.class);
+        setMenuItemEnabled(menu, R.id.menuTeacher, userPerms.teacher
+                && getClass() != TeacherActivity.class);
+        setMenuItemEnabled(menu, R.id.menuParent, userPerms.parent
+                && getClass() != ParentActivity.class);
         return menu.hasVisibleItems();
     }
 

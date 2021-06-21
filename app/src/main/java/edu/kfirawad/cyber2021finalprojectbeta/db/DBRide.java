@@ -140,21 +140,20 @@ public final class DBRide extends DBObject {
         if (!STATE_INACTIVE.equals(state))
             return;
         state = STATE_ACTIVE_PICKUP;
-        // TODO notify driver
-        // TODO notify parents and teachers
     }
 
     public void finishPickUpAndStartDropOff() {
         if (!STATE_ACTIVE_PICKUP.equals(state))
             return;
         state = STATE_ACTIVE_DROPOFF;
-        // TODO notify parents and teachers
     }
 
     public void finishDropOff() {
         if (!STATE_ACTIVE_DROPOFF.equals(state))
             return;
         state = STATE_INACTIVE;
+        for (UserData data : users.values())
+            data.reset();
         for (ChildData data : children.values())
             data.reset();
     }
@@ -163,6 +162,7 @@ public final class DBRide extends DBObject {
     public static final class UserData {
         public @NotNull String name, email;
         public @NotNull DBUserPerms perms;
+        public boolean notifiedPickUp, notifiedDropOff;
 
         /**
          * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
@@ -173,6 +173,7 @@ public final class DBRide extends DBObject {
             name = "";
             email = "";
             perms = DBUserPerms.create();
+            reset();
         }
 
         public static @NonNull UserData create(@NonNull String name, @NonNull String email, @NonNull DBUserPerms perms) {
@@ -181,6 +182,11 @@ public final class DBRide extends DBObject {
             data.email = email;
             data.perms = perms;
             return data;
+        }
+
+        public void reset() {
+            notifiedPickUp = false;
+            notifiedDropOff = false;
         }
     }
 

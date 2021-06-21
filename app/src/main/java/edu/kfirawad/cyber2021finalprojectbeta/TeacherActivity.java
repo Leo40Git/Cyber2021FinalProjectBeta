@@ -62,19 +62,18 @@ public class TeacherActivity extends UserPermActivity implements ChildListFragme
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean canEndRide = false;
-        if (dbRide != null)
-            canEndRide = DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state);
-        setMenuItemEnabled(menu, R.id.menuEndRide, canEndRide);
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menuEndRide) {
+        if (item.getItemId() == R.id.menuSave) {
             if (dbRide != null) {
                 dbRide.finishDropOff();
+                if (DBRide.STATE_INACTIVE.equals(dbRide.state)) {
+                    if (dbRefRideL != null) {
+                        dbRefRide.removeEventListener(dbRefRideL);
+                        dbRefRideL = null;
+                    }
+                    Toast.makeText(this, "Ride ended!", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
                 dbRefRide.setValue(dbRide);
             }
             return true;
@@ -116,19 +115,13 @@ public class TeacherActivity extends UserPermActivity implements ChildListFragme
                 cbPickedUp.setChecked(data.pickedUp);
                 if (DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state)) {
                     cbPickedUp.setEnabled(true);
-                    cbPickedUp.setOnCheckedChangeListener((v, checked) -> {
-                        data.pickedUp = checked;
-                        dbRefRide.setValue(dbRide);
-                    });
+                    cbPickedUp.setOnCheckedChangeListener((v, checked) -> data.pickedUp = checked);
                 } else
                     cbPickedUp.setEnabled(false);
                 cbDroppedOff.setChecked(data.droppedOff);
-                if (DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state)) {
+                if (data.pickedUp && DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state)) {
                     cbDroppedOff.setEnabled(true);
-                    cbDroppedOff.setOnCheckedChangeListener((v, checked) -> {
-                        data.droppedOff = checked;
-                        dbRefRide.setValue(dbRide);
-                    });
+                    cbDroppedOff.setOnCheckedChangeListener((v, checked) -> data.droppedOff = checked);
                 } else
                     cbDroppedOff.setEnabled(false);
             }
