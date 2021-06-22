@@ -100,7 +100,7 @@ public class UserServiceHandler extends Handler {
                         }
                     } else {
                         // user does not exist, kill service
-                        killService(hooks);
+                        hooks.killService();
                         return;
                     }
                     if (dbUser == null)
@@ -260,38 +260,43 @@ public class UserServiceHandler extends Handler {
     private Hooks hooks;
     private DatabaseListener dbLis;
 
+    public static final int ARG1_START = 1000;
+    public static final int ARG1_STOP = 2000;
+
     @Override
     public void handleMessage(@NonNull Message msg) {
-        if (msg.obj instanceof Hooks)
-            hooks = (Hooks) msg.obj;
-        else
-            throw new IllegalArgumentException("Message object is not hooks interface");
+        if (msg.arg1 == ARG1_START) {
+            if (hooks != null)
+                // already running!
+                return;
 
-        fbAuth = FirebaseAuth.getInstance();
-        fbUser = fbAuth.getCurrentUser();
-        if (fbUser == null) {
-            // not authenticated, kill service
-            killService(hooks);
-            return;
-        }
+            if (msg.obj instanceof Hooks)
+                hooks = (Hooks) msg.obj;
+            else
+                throw new IllegalArgumentException("Message object is not hooks interface");
 
-        authStateListener = auth -> {
-            if (auth.getCurrentUser() == null)
-                // (presumably) logged out, kill service
-                killService(hooks);
-        };
-        fbAuth.addAuthStateListener(authStateListener);
+            fbAuth = FirebaseAuth.getInstance();
+            fbUser = fbAuth.getCurrentUser();
+            if (fbUser == null) {
+                // not authenticated, kill service
+                hooks.killService();
+                return;
+            }
 
-        fbDb = FirebaseDatabase.getInstance();
-        dbLis = new DatabaseListener();
+            authStateListener = auth -> {
+                if (auth.getCurrentUser() == null)
+                    // (presumably) logged out, kill service
+                    hooks.killService();
+            };
+            fbAuth.addAuthStateListener(authStateListener);
+
+            fbDb = FirebaseDatabase.getInstance();
+            dbLis = new DatabaseListener();
+        } else if (msg.arg1 == ARG1_STOP)
+            cleanup();
     }
 
-    private void killService(@NonNull Hooks hooks) {
-        cleanup();
-        hooks.killService();
-    }
-
-    public void cleanup() {
+    private void cleanup() {
         if (fbAuth != null && authStateListener != null) {
             fbAuth.removeAuthStateListener(authStateListener);
             authStateListener = null;

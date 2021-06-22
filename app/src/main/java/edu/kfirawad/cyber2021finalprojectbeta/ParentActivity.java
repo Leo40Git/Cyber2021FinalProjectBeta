@@ -73,14 +73,14 @@ public class ParentActivity extends UserPermActivity implements ChildListFragmen
             if (data != null)
                 canSetChildComingToday = !data.pickedUp;
         }
-        if (canSetChildComingToday)
-            checkBox.setEnabled(false);
-        else {
+        if (canSetChildComingToday) {
+            checkBox.setEnabled(true);
             checkBox.setOnCheckedChangeListener((v, isChecked) -> {
                 dbRide.setChildComingToday(uid, isChecked);
                 dbRefRide.setValue(dbRide);
             });
-        }
+        } else
+            checkBox.setEnabled(false);
         return convertView;
     }
 }

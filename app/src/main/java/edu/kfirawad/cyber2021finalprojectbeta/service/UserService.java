@@ -19,6 +19,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.provider.Settings;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -32,6 +33,8 @@ import edu.kfirawad.cyber2021finalprojectbeta.LocPermPromptActivity;
 import edu.kfirawad.cyber2021finalprojectbeta.R;
 
 public class UserService extends Service {
+    public static final String EXTRA_GOT_LOCATION_PERMS = "gotLocationPerms";
+
     private static final String TAG = "C2021FPB:serv:User";
     private static boolean running = false;
 
@@ -43,7 +46,8 @@ public class UserService extends Service {
         return null;
     }
 
-    private final ArrayList<UserServiceHandler.SimpleLocationListener> locationListenerDelegates = new ArrayList<>();
+    private final ArrayList<UserServiceHandler.SimpleLocationListener> locationListenerDelegates
+            = new ArrayList<>();
     private NotificationManagerCompat notificationManager;
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -52,6 +56,8 @@ public class UserService extends Service {
 
     @Override
     public void onCreate() {
+        Log.d(TAG, "Initializing service!");
+
         HandlerThread handlerThread = new HandlerThread(TAG, Process.THREAD_PRIORITY_BACKGROUND);
         handlerThread.start();
 
@@ -66,6 +72,7 @@ public class UserService extends Service {
         if (locationListener != null)
             return;
         if (haveLocationPermissions()) {
+            Log.d(TAG, "Creating location listener!");
             locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(@NonNull Location location) {
@@ -76,7 +83,7 @@ public class UserService extends Service {
                 @Override
                 public void onProviderEnabled(@NonNull String provider) {
                     if (LocationManager.GPS_PROVIDER.equals(provider))
-                        notificationManager.cancel(LOC_TAG, LOC_ID_ENABLE);
+                        notificationManager.cancel(NOTIF_TAG_LOC, NOTIF_LOC_ID_ENABLE);
                 }
 
                 @Override
@@ -85,7 +92,7 @@ public class UserService extends Service {
                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     PendingIntent pi = PendingIntent.getActivity(UserService.this, 0, i, 0);
 
-                    notificationManager.notify(LOC_TAG, LOC_ID_ENABLE,
+                    pushNotification(NOTIF_TAG_LOC, NOTIF_LOC_ID_ENABLE,
                             new NotificationCompat.Builder(UserService.this, CHANNEL_ID)
                                     .setSmallIcon(R.drawable.ic_notification)
                                     .setContentTitle("Please enable location!")
@@ -102,34 +109,38 @@ public class UserService extends Service {
 
     private void destroyLocationListener() {
         if (locationListener != null) {
+            Log.d(TAG, "Destroying location listener!");
             locationManager.removeUpdates(locationListener);
             locationListener = null;
         }
     }
 
-    private static final String LOC_TAG = TAG + ":LOCATION";
-    private static final int LOC_ID_PERMS = 0;
-    private static final int LOC_ID_ENABLE = 1;
+    private static final String NOTIF_TAG = "NOTIF";
+    private static final String NOTIF_TAG_LOC = NOTIF_TAG + ":LOCATION";
+    private static final int NOTIF_LOC_ID_PERMS = 0;
+    private static final int NOTIF_LOC_ID_ENABLE = 1;
 
     private boolean haveLocationPermissions() {
-        if (ActivityCompat.checkSelfPermission(UserService.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(UserService.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            notificationManager.cancel(LOC_TAG, LOC_ID_PERMS);
-            return true;
-        } else {
+        if (ActivityCompat.checkSelfPermission(UserService.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(UserService.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "No permissions, pushing notification");
             Intent i = new Intent(UserService.this, LocPermPromptActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pi = PendingIntent.getActivity(UserService.this, 0, i, 0);
 
-            notificationManager.notify(LOC_TAG, LOC_ID_PERMS,
+            pushNotification(NOTIF_TAG_LOC, NOTIF_LOC_ID_PERMS,
                     new NotificationCompat.Builder(UserService.this, CHANNEL_ID)
-                        .setSmallIcon(R.drawable.ic_notification)
-                        .setContentTitle("Location permissions required!")
-                        .setContentText("Touch this notification to grant the app the required permissions.")
-                        .setPriority(NotificationCompat.PRIORITY_MAX)
-                        .setContentIntent(pi).setOngoing(true)
-                        .build());
+                            .setSmallIcon(R.drawable.ic_notification)
+                            .setContentTitle("Location permissions required!")
+                            .setContentText("Touch this notification to grant the app the required permissions.")
+                            .setPriority(NotificationCompat.PRIORITY_MAX)
+                            .setContentIntent(pi).setOngoing(true)
+                            .build());
             return false;
+        } else {
+            Log.d(TAG, "Cancelling perm notification");
+            notificationManager.cancel(NOTIF_TAG_LOC, NOTIF_LOC_ID_PERMS);
+            return true;
         }
     }
 
@@ -146,13 +157,17 @@ public class UserService extends Service {
         }
     }
 
+    private void pushNotification(String tag, int id, @NonNull Notification n) {
+        createNotificationChannel();
+        notificationManager.notify(tag, id, n);
+    }
+
     private final AtomicInteger nId = new AtomicInteger();
     private void pushNotification(@NonNull Notification n) {
-        notificationManager.notify(TAG, nId.getAndIncrement(), n);
+        pushNotification(TAG, nId.getAndIncrement(), n);
     }
 
     private void pushNotification(String title, String desc) {
-        createNotificationChannel();
         pushNotification(new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
@@ -163,18 +178,28 @@ public class UserService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && intent.hasExtra(EXTRA_GOT_LOCATION_PERMS)) {
+            if (intent.getBooleanExtra(EXTRA_GOT_LOCATION_PERMS, false)) {
+                Log.d(TAG, "Creating location listener after we got perms!");
+                createLocationListener();
+            }
+            return START_STICKY;
+        }
+
         if (running) {
             // we're already running!
-            stopSelf(startId);
+            Log.d(TAG, "Tried to start service again (startId = " + startId + ")");
             return START_STICKY;
         } else
             running = true;
+        Log.d(TAG, "Starting service!!! (startId = " + startId + ")");
 
         Message msg = handler.obtainMessage();
+        msg.arg1 = UserServiceHandler.ARG1_START;
         msg.obj = new UserServiceHandler.Hooks() {
             @Override
             public void killService() {
-                stopSelf(startId);
+                stopSelf();
             }
 
             @Override
@@ -202,12 +227,17 @@ public class UserService extends Service {
 
     @Override
     public void onDestroy() {
-        looper.quitSafely();
+        Log.d(TAG, "Service destroyed");
         if (handler != null) {
-            handler.cleanup();
+            Message msg = handler.obtainMessage();
+            msg.arg1 = UserServiceHandler.ARG1_STOP;
+            handler.sendMessage(msg);
             handler = null;
         }
         destroyLocationListener();
+        looper.quitSafely();
+
+        looper = null;
         running = false;
     }
 }

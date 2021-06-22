@@ -1,5 +1,6 @@
 package edu.kfirawad.cyber2021finalprojectbeta;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -73,28 +74,38 @@ public class TeacherActivity extends UserPermActivity implements ChildListFragme
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menuSave) {
             if (dbRide != null) {
-                for (Map.Entry<String, SavedState> entry : savedStates.entrySet()) {
-                    SavedState state = entry.getValue();
-                    DBRide.ChildData data = dbRide.children.get(entry.getKey());
-                    if (data == null)
-                        continue;
-                    data.pickedUp = state.pickedUp;
-                    data.droppedOff = state.droppedOff;
+                if (DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state)) {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Finish Ride?")
+                            .setMessage("Are you finished?")
+                            .setNeutralButton("No", (dialog, which) -> dialog.dismiss())
+                            .setNegativeButton("Yes", (dialog, which) -> {
+                                applySavedState();
+                                dbRide.finishDropOff();
+                                dbRefRide.setValue(dbRide);
+                                Toast.makeText(this, "Ride ended!", Toast.LENGTH_SHORT).show();
+                                finish();
+                            })
+                            .show();
+                } else {
+                    applySavedState();
+                    dbRefRide.setValue(dbRide);
                 }
-                dbRide.finishDropOff();
-                if (DBRide.STATE_INACTIVE.equals(dbRide.state)) {
-                    if (dbRefRideL != null) {
-                        dbRefRide.removeEventListener(dbRefRideL);
-                        dbRefRideL = null;
-                    }
-                    Toast.makeText(this, "Ride ended!", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                dbRefRide.setValue(dbRide);
             }
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void applySavedState() {
+        for (Map.Entry<String, SavedState> entry : savedStates.entrySet()) {
+            SavedState state = entry.getValue();
+            DBRide.ChildData data = dbRide.children.get(entry.getKey());
+            if (data == null)
+                continue;
+            data.pickedUp = state.pickedUp;
+            data.droppedOff = state.droppedOff;
+        }
     }
 
     @Override

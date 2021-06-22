@@ -125,38 +125,52 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
         Button btnReady = convertView.findViewById(R.id.btnReady);
         tvTitle.setText(name);
         tvDesc.setText(pickupSpot);
-        if (dbRide.isChildComingToday(uid)) {
-            tvNotToday.setVisibility(View.GONE);
-            layBtns.setVisibility(View.VISIBLE);
-            DBRide.ChildData data = dbRide.children.get(uid);
-            if (data == null) {
-                // huh
+        if (dbRide != null) {
+            if (dbRide.isChildComingToday(uid)) {
+                tvNotToday.setVisibility(View.GONE);
+                layBtns.setVisibility(View.VISIBLE);
+                if (DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state)) {
+                    layBtns.setVisibility(View.GONE);
+                    btnLate.setEnabled(false);
+                    btnReady.setEnabled(false);
+                } else {
+                    DBRide.ChildData data = dbRide.children.get(uid);
+                    if (data == null) {
+                        // huh
+                        layBtns.setVisibility(View.GONE);
+                        btnLate.setEnabled(false);
+                        btnReady.setEnabled(false);
+                    } else {
+                        if (data.lateNotifyState > DBRide.ChildData.NOTIFY_STATE_NO)
+                            btnLate.setEnabled(false);
+                        else {
+                            btnLate.setEnabled(true);
+                            btnLate.setOnClickListener(v -> {
+                                btnLate.setEnabled(false);
+                                data.lateNotifyState = DBRide.ChildData.NOTIFY_STATE_YES;
+                                dbRefRide.setValue(dbRide);
+                            });
+                        }
+                        if (data.readyNotifyState > DBRide.ChildData.NOTIFY_STATE_NO)
+                            btnReady.setEnabled(false);
+                        else {
+                            btnReady.setEnabled(true);
+                            btnReady.setOnClickListener(v -> {
+                                btnReady.setEnabled(false);
+                                data.readyNotifyState = DBRide.ChildData.NOTIFY_STATE_YES;
+                                dbRefRide.setValue(dbRide);
+                            });
+                        }
+                    }
+                }
+            } else {
+                tvNotToday.setVisibility(View.VISIBLE);
+                layBtns.setVisibility(View.GONE);
                 btnLate.setEnabled(false);
                 btnReady.setEnabled(false);
-            } else {
-                if (data.lateNotifyState > DBRide.ChildData.NOTIFY_STATE_NO)
-                    btnLate.setEnabled(false);
-                else {
-                    btnLate.setEnabled(true);
-                    btnLate.setOnClickListener(v -> {
-                        btnLate.setEnabled(false);
-                        data.lateNotifyState = DBRide.ChildData.NOTIFY_STATE_YES;
-                        dbRefRide.setValue(dbRide);
-                    });
-                }
-                if (data.readyNotifyState > DBRide.ChildData.NOTIFY_STATE_NO)
-                    btnReady.setEnabled(false);
-                else {
-                    btnReady.setEnabled(true);
-                    btnReady.setOnClickListener(v -> {
-                        btnReady.setEnabled(false);
-                        data.readyNotifyState = DBRide.ChildData.NOTIFY_STATE_YES;
-                        dbRefRide.setValue(dbRide);
-                    });
-                }
             }
         } else {
-            tvNotToday.setVisibility(View.VISIBLE);
+            tvNotToday.setVisibility(View.GONE);
             layBtns.setVisibility(View.GONE);
             btnLate.setEnabled(false);
             btnReady.setEnabled(false);
