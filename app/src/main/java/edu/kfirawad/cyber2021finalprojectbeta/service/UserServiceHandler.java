@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBLatLng;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
@@ -157,6 +158,8 @@ public class UserServiceHandler extends Handler {
             }
         }
 
+        private final AtomicBoolean sentPickUpNotif = new AtomicBoolean(false);
+
         private void onDBRideUpdated(@NonNull DatabaseReference dbRefRide, @NonNull DBRide dbRide) {
             if (!removedRides.isEmpty()) {
                 for (String removedUid : removedRides) {
@@ -176,14 +179,20 @@ public class UserServiceHandler extends Handler {
             boolean modified = false;
 
             if (userData.pickUpNotifyState == DBRide.NOTIFY_STATE_YES) {
-                if (!userData.perms.driver) {
-                    hooks.pushNotification(
-                            dbRide.name + ": Ride started!",
-                            "The driver has started the ride!");
+                if (sentPickUpNotif.compareAndSet(false, true)) {
+                    if (!userData.perms.driver) {
+                        hooks.pushNotification(
+                                dbRide.name + ": Ride started!",
+                                "The driver has started the ride!");
+                    }
                 }
                 userData.pickUpNotifyState = DBRide.NOTIFY_STATE_YES_AND_PUSHED;
                 modified = true;
             }
+
+            if (!DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state))
+                sentPickUpNotif.lazySet(false);
+
             if (userData.dropOffNotifyState == DBRide.NOTIFY_STATE_YES) {
                 if (!userData.perms.driver) {
                     hooks.pushNotification(
