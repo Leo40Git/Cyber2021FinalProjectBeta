@@ -15,6 +15,10 @@ public final class DBRide extends DBObject {
     public static final String STATE_ACTIVE_PICKUP = "active_pickUp";
     public static final String STATE_ACTIVE_DROPOFF = "active_dropOff";
 
+    public static final int NOTIFY_STATE_NO = 0;
+    public static final int NOTIFY_STATE_YES = 1;
+    public static final int NOTIFY_STATE_YES_AND_PUSHED = 2;
+
     public @NotNull String name, destination, state;
     public int startHour, startMinute;
     public @NotNull Map<String, UserData> users;
@@ -136,30 +140,34 @@ public final class DBRide extends DBObject {
     public void startPickUp() {
         if (!STATE_INACTIVE.equals(state))
             return;
+        for (UserData data : users.values())
+            data.reset();
+        for (ChildData data : children.values())
+            data.reset();
         state = STATE_ACTIVE_PICKUP;
+        for (UserData data : users.values())
+            data.pickUpNotifyState = NOTIFY_STATE_YES;
     }
 
     public void finishPickUpAndStartDropOff() {
         if (!STATE_ACTIVE_PICKUP.equals(state))
             return;
         state = STATE_ACTIVE_DROPOFF;
+        for (UserData data : users.values())
+            data.dropOffNotifyState = NOTIFY_STATE_YES;
     }
 
     public void finishDropOff() {
         if (!STATE_ACTIVE_DROPOFF.equals(state))
             return;
         state = STATE_INACTIVE;
-        for (UserData data : users.values())
-            data.reset();
-        for (ChildData data : children.values())
-            data.reset();
     }
 
     @IgnoreExtraProperties
     public static final class UserData {
         public @NotNull String name, email;
         public @NotNull DBUserPerms perms;
-        public boolean notifiedPickUp, notifiedDropOff;
+        public int pickUpNotifyState, dropOffNotifyState;
 
         /**
          * @deprecated This constructor is only for Firebase Realtime Database serialization.<br>
@@ -182,17 +190,13 @@ public final class DBRide extends DBObject {
         }
 
         public void reset() {
-            notifiedPickUp = false;
-            notifiedDropOff = false;
+            pickUpNotifyState = NOTIFY_STATE_NO;
+            dropOffNotifyState = NOTIFY_STATE_NO;
         }
     }
 
     @IgnoreExtraProperties
     public static final class ChildData {
-        public static final int NOTIFY_STATE_NO = 0;
-        public static final int NOTIFY_STATE_YES = 1;
-        public static final int NOTIFY_STATE_YES_AND_PUSHED = 2;
-
         public @NotNull String name, parentUid, parentName, pickupSpot;
         public boolean comingToday;
         public int lateNotifyState, readyNotifyState;

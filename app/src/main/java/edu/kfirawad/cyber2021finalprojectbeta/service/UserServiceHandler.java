@@ -175,22 +175,22 @@ public class UserServiceHandler extends Handler {
 
             boolean modified = false;
 
-            if (!userData.notifiedPickUp && DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state)) {
+            if (userData.pickUpNotifyState == DBRide.NOTIFY_STATE_YES) {
                 if (!userData.perms.driver) {
                     hooks.pushNotification(
                             dbRide.name + ": Ride started!",
                             "The driver has started the ride!");
                 }
-                userData.notifiedPickUp = true;
+                userData.pickUpNotifyState = DBRide.NOTIFY_STATE_YES_AND_PUSHED;
                 modified = true;
             }
-            if (!userData.notifiedDropOff && DBRide.STATE_INACTIVE.equals(dbRide.state)) {
+            if (userData.dropOffNotifyState == DBRide.NOTIFY_STATE_YES) {
                 if (!userData.perms.driver) {
                     hooks.pushNotification(
                             dbRide.name + ": At the destination!",
                             "The driver has reached the destination!");
                 }
-                userData.notifiedDropOff = true;
+                userData.dropOffNotifyState = DBRide.NOTIFY_STATE_YES_AND_PUSHED;
                 modified = true;
             }
 
@@ -212,18 +212,18 @@ public class UserServiceHandler extends Handler {
                         data.notifiedDroppedOff = true;
                         modified = true;
                     }
-                    if (data.lateNotifyState == DBRide.ChildData.NOTIFY_STATE_YES) {
+                    if (data.lateNotifyState == DBRide.NOTIFY_STATE_YES) {
                         hooks.pushNotification(
                                 dbRide.name + ": I'll be late!",
                                 "The driver is running late. Still, be prepared!");
-                        data.lateNotifyState = DBRide.ChildData.NOTIFY_STATE_YES_AND_PUSHED;
+                        data.lateNotifyState = DBRide.NOTIFY_STATE_YES_AND_PUSHED;
                         modified = true;
                     }
-                    if (data.readyNotifyState == DBRide.ChildData.NOTIFY_STATE_YES) {
+                    if (data.readyNotifyState == DBRide.NOTIFY_STATE_YES) {
                         hooks.pushNotification(
                                 dbRide.name + ": Be ready!",
                                 "Make sure " + data.name + " is ready to be picked up!");
-                        data.readyNotifyState = DBRide.ChildData.NOTIFY_STATE_YES_AND_PUSHED;
+                        data.readyNotifyState = DBRide.NOTIFY_STATE_YES_AND_PUSHED;
                         modified = true;
                     }
                 }
