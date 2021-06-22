@@ -128,12 +128,7 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
         if (dbRide != null) {
             if (dbRide.isChildComingToday(uid)) {
                 tvNotToday.setVisibility(View.GONE);
-                layBtns.setVisibility(View.VISIBLE);
-                if (DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state)) {
-                    layBtns.setVisibility(View.GONE);
-                    btnLate.setEnabled(false);
-                    btnReady.setEnabled(false);
-                } else {
+                if (DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state)) {
                     DBRide.ChildData data = dbRide.children.get(uid);
                     if (data == null) {
                         // huh
@@ -141,6 +136,7 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
                         btnLate.setEnabled(false);
                         btnReady.setEnabled(false);
                     } else {
+                        layBtns.setVisibility(View.VISIBLE);
                         if (data.lateNotifyState > DBRide.ChildData.NOTIFY_STATE_NO)
                             btnLate.setEnabled(false);
                         else {
@@ -162,6 +158,10 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
                             });
                         }
                     }
+                } else {
+                    layBtns.setVisibility(View.GONE);
+                    btnLate.setEnabled(false);
+                    btnReady.setEnabled(false);
                 }
             } else {
                 tvNotToday.setVisibility(View.VISIBLE);

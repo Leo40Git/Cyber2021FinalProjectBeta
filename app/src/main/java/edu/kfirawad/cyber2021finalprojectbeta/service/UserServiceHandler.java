@@ -184,7 +184,7 @@ public class UserServiceHandler extends Handler {
                 userData.notifiedPickUp = true;
                 modified = true;
             }
-            if (!userData.notifiedDropOff && DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state)) {
+            if (!userData.notifiedDropOff && DBRide.STATE_INACTIVE.equals(dbRide.state)) {
                 if (!userData.perms.driver) {
                     hooks.pushNotification(
                             dbRide.name + ": At the destination!",
@@ -234,10 +234,10 @@ public class UserServiceHandler extends Handler {
 
             if (userData.perms.driver && DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state)) {
                 if (locationListener == null) {
-                    hooks.addLocationListener(locationListener = location -> {
-                        dbRide.driverLocation = DBLatLng.create(location.getLatitude(), location.getLongitude());
-                        dbRefRide.setValue(dbRide);
-                    });
+                    final DatabaseReference dbRefLoc = fbDb.getReference(
+                            "rides/" + dbRide.uid + "/driverLocation");
+                    hooks.addLocationListener(locationListener = l ->
+                            dbRefLoc.setValue(DBLatLng.create(l.getLatitude(), l.getLongitude())));
                 }
             } else if (locationListener != null) {
                 hooks.removeLocationListener(locationListener);
