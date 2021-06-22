@@ -3,6 +3,7 @@ package edu.kfirawad.cyber2021finalprojectbeta;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,13 +63,30 @@ public class DriverActivity extends UserPermActivity implements ChildListFragmen
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.menuToggleDrive);
+        if (item != null) {
+            boolean isInPickupState = false;
+            if (dbRide != null)
+                isInPickupState = DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state);
+            if (isInPickupState) {
+                item.setIcon(R.drawable.ic_stop);
+                item.setTitle("End Drive");
+            } else {
+                item.setIcon(R.drawable.ic_start);
+                item.setTitle("Start Drive");
+            }
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menuToggleDrive) {
             if (DBRide.STATE_INACTIVE.equals(dbRide.state)) {
                 dbRide.startPickUp();
                 dbRefRide.setValue(dbRide);
-                item.setIcon(R.drawable.ic_stop);
-                item.setTitle("End Drive");
+                supportInvalidateOptionsMenu();
             } else {
                 new AlertDialog.Builder(this)
                         .setTitle("Confirm End Drive")

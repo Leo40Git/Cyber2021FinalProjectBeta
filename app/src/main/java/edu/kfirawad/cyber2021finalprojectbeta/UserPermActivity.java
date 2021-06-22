@@ -189,6 +189,11 @@ public abstract class UserPermActivity extends AppCompatActivity {
             userPerms = dbRide.getUserPerms(dbUser);
         if (userPerms == null)
             userPerms = DBUserPerms.create();
+        if (dbRide == null)
+            setMenuItemEnabled(menu, R.id.menuDriverLocation, false);
+        else
+            setMenuItemEnabled(menu, R.id.menuDriverLocation,
+                   !userPerms.driver && DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state));
         setMenuItemEnabled(menu, R.id.menuManager, userPerms.manager
                 && getClass() != ManagerActivity.class);
         setMenuItemEnabled(menu, R.id.menuDriver, userPerms.driver
@@ -228,27 +233,36 @@ public abstract class UserPermActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.menuManager) {
+        if (id == R.id.menuDriverLocation) {
+            Intent i = new Intent(this, DriverLocationActivity.class);
+            i.putExtra(RIDE_UID, rideUid);
+            startActivity(i);
+            return true;
+        } if (id == R.id.menuManager) {
             if (getClass() != ManagerActivity.class) {
                 Intent i = new Intent(this, ManagerActivity.class);
+                i.putExtra(RIDE_UID, rideUid);
                 startActivity(i);
             }
             return true;
         } else if (id == R.id.menuDriver) {
             if (getClass() != DriverActivity.class) {
                 Intent i = new Intent(this, DriverActivity.class);
+                i.putExtra(RIDE_UID, rideUid);
                 startActivity(i);
             }
             return true;
         } else if (id == R.id.menuTeacher) {
             if (getClass() != TeacherActivity.class) {
                 Intent i = new Intent(this, TeacherActivity.class);
+                i.putExtra(RIDE_UID, rideUid);
                 startActivity(i);
             }
             return true;
         } else if (id == R.id.menuParent) {
             if (getClass() != ParentActivity.class) {
                 Intent i = new Intent(this, ParentActivity.class);
+                i.putExtra(RIDE_UID, rideUid);
                 startActivity(i);
             }
             return true;

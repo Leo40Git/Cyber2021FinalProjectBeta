@@ -13,7 +13,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
@@ -28,13 +27,13 @@ import androidx.core.app.NotificationManagerCompat;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
 import edu.kfirawad.cyber2021finalprojectbeta.LocPermPromptActivity;
 import edu.kfirawad.cyber2021finalprojectbeta.R;
 
 public class UserService extends Service {
     private static final String TAG = "C2021FPB:serv:User";
+    private static boolean running = false;
 
     public UserService() {
     }
@@ -60,11 +59,12 @@ public class UserService extends Service {
         handler = new UserServiceHandler(looper);
         notificationManager = NotificationManagerCompat.from(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        createLocationListener();
     }
 
     @SuppressLint("MissingPermission")
     private void createLocationListener() {
+        if (locationListener != null)
+            return;
         if (haveLocationPermissions()) {
             locationListener = new LocationListener() {
                 @Override
@@ -100,9 +100,16 @@ public class UserService extends Service {
         }
     }
 
+    private void destroyLocationListener() {
+        if (locationListener != null) {
+            locationManager.removeUpdates(locationListener);
+            locationListener = null;
+        }
+    }
+
     private static final String LOC_TAG = TAG + ":LOCATION";
     private static final int LOC_ID_PERMS = 0;
-    private static final int LOC_ID_ENABLE = 0;
+    private static final int LOC_ID_ENABLE = 1;
 
     private boolean haveLocationPermissions() {
         if (ActivityCompat.checkSelfPermission(UserService.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -130,8 +137,8 @@ public class UserService extends Service {
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Parent";
-            String description = "Notifications for parents";
+            CharSequence name = "General";
+            String description = "All notifications";
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
@@ -156,6 +163,13 @@ public class UserService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (running) {
+            // we're already running!
+            stopSelf(startId);
+            return START_STICKY;
+        } else
+            running = true;
+
         Message msg = handler.obtainMessage();
         msg.obj = new UserServiceHandler.Hooks() {
             @Override
@@ -172,12 +186,14 @@ public class UserService extends Service {
             public void addLocationListener(UserServiceHandler.SimpleLocationListener listener) {
                 if (!locationListenerDelegates.contains(listener))
                     locationListenerDelegates.add(listener);
-                haveLocationPermissions(); // request location permissions
+                createLocationListener();
             }
 
             @Override
             public void removeLocationListener(UserServiceHandler.SimpleLocationListener listener) {
                 locationListenerDelegates.remove(listener);
+                if (locationListenerDelegates.isEmpty())
+                    destroyLocationListener();
             }
         };
         handler.sendMessage(msg);
@@ -186,9 +202,12 @@ public class UserService extends Service {
 
     @Override
     public void onDestroy() {
+        looper.quitSafely();
         if (handler != null) {
             handler.cleanup();
             handler = null;
         }
+        destroyLocationListener();
+        running = false;
     }
 }

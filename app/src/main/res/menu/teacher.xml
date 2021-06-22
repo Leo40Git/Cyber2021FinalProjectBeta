@@ -7,6 +7,11 @@
             android:icon="@drawable/ic_save"
             android:title="Save" />
     <item
+            android:title="See Driver's Location"
+            app:showAsAction="always"
+            android:icon="@drawable/ic_location"
+            android:id="@+id/menuDriverLocation" />
+    <item
         android:id="@+id/menuManager"
         android:title="Manager" />
     <item

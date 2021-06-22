@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBLatLng;
 import edu.kfirawad.cyber2021finalprojectbeta.db.DBRide;
@@ -177,16 +176,20 @@ public class UserServiceHandler extends Handler {
             boolean modified = false;
 
             if (!userData.notifiedPickUp && DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state)) {
-                hooks.pushNotification(
-                        dbRide.name + ": Ride started!",
-                        "The driver has started the ride!");
+                if (!userData.perms.driver) {
+                    hooks.pushNotification(
+                            dbRide.name + ": Ride started!",
+                            "The driver has started the ride!");
+                }
                 userData.notifiedPickUp = true;
                 modified = true;
             }
             if (!userData.notifiedDropOff && DBRide.STATE_ACTIVE_DROPOFF.equals(dbRide.state)) {
-                hooks.pushNotification(
-                        dbRide.name + ": At the destination!",
-                        "The driver has reached the destination!");
+                if (!userData.perms.driver) {
+                    hooks.pushNotification(
+                            dbRide.name + ": At the destination!",
+                            "The driver has reached the destination!");
+                }
                 userData.notifiedDropOff = true;
                 modified = true;
             }
@@ -231,10 +234,10 @@ public class UserServiceHandler extends Handler {
 
             if (userData.perms.driver && DBRide.STATE_ACTIVE_PICKUP.equals(dbRide.state)) {
                 if (locationListener == null) {
-                    locationListener = location -> {
+                    hooks.addLocationListener(locationListener = location -> {
                         dbRide.driverLocation = DBLatLng.create(location.getLatitude(), location.getLongitude());
                         dbRefRide.setValue(dbRide);
-                    };
+                    });
                 }
             } else if (locationListener != null) {
                 hooks.removeLocationListener(locationListener);

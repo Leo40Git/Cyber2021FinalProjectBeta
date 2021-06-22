@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+            android:title="See Driver's Location"
+            app:showAsAction="always"
+            android:icon="@drawable/ic_location"
+            android:id="@+id/menuDriverLocation" />
     <item
         android:id="@+id/menuManager"
         android:title="Manager" />
