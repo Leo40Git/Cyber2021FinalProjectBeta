@@ -125,7 +125,7 @@ public class UserService extends Service {
                 && ActivityCompat.checkSelfPermission(UserService.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "No permissions, pushing notification");
             Intent i = new Intent(UserService.this, LocPermPromptActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pi = PendingIntent.getActivity(UserService.this, 0, i, 0);
 
             pushNotification(NOTIF_TAG_LOC, NOTIF_LOC_ID_PERMS,
